@@ -12,6 +12,10 @@ import run from '@/core/gin-vue-admin.js'
 import auth from '@/directive/auth'
 import { store } from '@/pinia'
 import App from './App.vue'
+
+// 自己添加的：
+import 'github-markdown-css/github-markdown.css'
+
 const app = createApp(App)
 app.config.productionTip = false
 

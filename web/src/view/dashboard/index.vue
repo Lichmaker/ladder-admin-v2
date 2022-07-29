@@ -101,12 +101,25 @@
         </div>
       </div>
     </div>
+    <div class="gva-card-box">
+	<div class="gva-card">
+	  <div class="card-header">
+		<span>文章展示</span>
+	  </div>
+	  <div class="echart-box">
+		<el-row :gutter="20">
+		  <dashboard-article />
+		</el-row>
+	  </div>
+	</div>
+  </div>
   </div>
 </template>
 
 <script setup>
 import EchartsLine from '@/view/dashboard/dashboardCharts/echartsLine.vue'
 import DashboardTable from '@/view/dashboard/dashboardTable/dashboardTable.vue'
+import DashboardArticle from '@/view/dashboard/dashboardArticle/dashboardArticle.vue'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useWeatherInfo } from '@/view/dashboard/weather.js'
