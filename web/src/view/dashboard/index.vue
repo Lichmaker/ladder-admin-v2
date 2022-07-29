@@ -3,7 +3,7 @@
     <div class="gva-card-box">
       <div class="gva-card gva-top-card">
         <div class="gva-top-card-left">
-          <div class="gva-top-card-left-title">早安，管理员，请开始一天的工作吧</div>
+          <div class="gva-top-card-left-title">欢迎使用 Ladder Admin 2.0</div>
           <div class="gva-top-card-left-dot">{{ weatherInfo }}</div>
           <div class="gva-top-card-left-rows">
             <el-row>
@@ -52,7 +52,7 @@
             </div>
           </div>
         </div>
-        <img src="@/assets/dashboard.png" class="gva-top-card-right" alt>
+        <!-- <img src="@/assets/dashboard.png" class="gva-top-card-right" alt> -->
       </div>
     </div>
     <div class="gva-card-box">
@@ -95,7 +95,7 @@
               <echarts-line />
             </el-col>
             <el-col :xs="24" :sm="6">
-              <dashboard-table />
+              <dashboardTable />
             </el-col>
           </el-row>
         </div>
