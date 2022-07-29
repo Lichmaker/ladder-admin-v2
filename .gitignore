@@ -31,3 +31,4 @@ web/.pnpm-debug.log
 web/pnpm-lock.yaml
 
 server/config.yaml
+server/config.docker.yaml
