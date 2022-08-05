@@ -20,7 +20,7 @@ export default {
   computed: {
     // 使用 computed 才能在动态绑定时动态更新
     htmla: function () {
-              console.log("heyhey")
+      console.log("heyhey")
       let res = this.md.render(this.content)
       console.log(this.content)
       console.log(res)
