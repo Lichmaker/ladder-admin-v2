@@ -1,4 +1,3 @@
-
 <template>
   <v-md-preview :text="text"></v-md-preview>
 </template>
@@ -23,7 +22,7 @@ export default {
     content: String,
   },
   components: {
-    VMdPreview
+    VMdPreview,
   },
   data() {
     return {
