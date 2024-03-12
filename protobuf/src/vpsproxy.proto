@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package vpsproxy;
+
+option go_package = "/vpsproxy";
+
+import "google/protobuf/empty.proto";
+
+service VPSProxyService {
+  rpc GetHttpProxy(google.protobuf.Empty) returns (GetHttpProxyResponse);
+  rpc UpdateHttpProxy(UpdateHttpProxyReq) returns (google.protobuf.Empty);
+  rpc Shutdown(google.protobuf.Empty) returns (google.protobuf.Empty);
+}
+
+message UpdateHttpProxyReq { uint32 Port = 1; }
+
+message GetHttpProxyResponse { uint32 Port = 1; }

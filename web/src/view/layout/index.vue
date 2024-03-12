@@ -1,68 +1,151 @@
 <template>
   <el-container class="layout-cont">
     <el-container :class="[isSider?'openside':'hideside',isMobile ? 'mobile': '']">
-      <el-row :class="[isShadowBg?'shadowBg':'']" @click="changeShadow()" />
-      <el-aside class="main-cont main-left gva-aside">
-        <div class="tilte" :style="{background: backgroundColor}">
-          <!-- <img alt class="logoimg" :src="$GIN_VUE_ADMIN.appLogo"> -->
-          <div v-if="isSider" class="tit-text" :style="{color:textColor}">{{ $GIN_VUE_ADMIN.appName }}</div>
+      <el-row
+        :class="[isShadowBg && isMobile?'bg-black opacity-30 w-full h-full absolute top-0 left-0 z-[1001]':'']"
+        @click="changeShadow()"
+      />
+      <el-aside
+        class="main-cont gva-aside"
+        :style="{width:asideWidth()}"
+      >
+        <div
+          class="min-h-[60px] text-center transition-all duration-300 flex items-center justify-center gap-2"
+          :style="{background: backgroundColor}"
+        >
+          <!-- <img
+            alt
+            class="w-9 h-9 p-1 bg-white rounded-full"
+            :src="$GIN_VUE_ADMIN.appLogo"
+          > -->
+          <div
+            v-if="isSider"
+            class="inline-flex font-bold text-2xl"
+            :style="{color:textColor}"
+          >{{ $GIN_VUE_ADMIN.appName }}</div>
         </div>
         <Aside class="aside" />
       </el-aside>
       <!-- 分块滑动功能 -->
       <el-main class="main-cont main-right">
-        <transition :duration="{ enter: 800, leave: 100 }" mode="out-in" name="el-fade-in-linear">
+        <transition
+          :duration="{ enter: 800, leave: 100 }"
+          mode="out-in"
+          name="el-fade-in-linear"
+        >
           <div
-            :style="{width: `calc(100% - ${isMobile?'0px':isCollapse?'54px':'220px'})`}"
-            class="topfix"
+            :style="{width: `calc(100% - ${getAsideWidth()})`}"
+            class="fixed top-0 box-border z-50"
           >
             <el-row>
               <el-col>
                 <el-header class="header-cont">
-                  <el-row class="pd-0">
-                    <el-col :xs="2" :lg="1" :md="1" :sm="1" :xl="1" style="z-index:100">
-                      <div class="menu-total" @click="totalCollapse">
-                        <div v-if="isCollapse" class="gvaIcon gvaIcon-arrow-double-right" />
-                        <div v-else class="gvaIcon gvaIcon-arrow-double-left" />
+                  <el-row class="p-0 h-full">
+                    <el-col
+                      :xs="2"
+                      :lg="1"
+                      :md="1"
+                      :sm="1"
+                      :xl="1"
+                      class="z-50 flex items-center pl-3"
+                    >
+                      <div
+                        class="text-black cursor-pointer text-lg leading-5"
+                        @click="totalCollapse"
+                      >
+                        <div
+                          v-if="isCollapse"
+                          class="gvaIcon gvaIcon-arrow-double-right"
+                        />
+                        <div
+                          v-else
+                          class="gvaIcon gvaIcon-arrow-double-left"
+                        />
                       </div>
                     </el-col>
-                    <el-col :xs="10" :lg="14" :md="14" :sm="9" :xl="14" :pull="1">
-                      <el-breadcrumb class="breadcrumb">
+                    <el-col
+                      :xs="10"
+                      :lg="14"
+                      :md="14"
+                      :sm="9"
+                      :xl="14"
+                      :pull="1"
+                      class="flex items-center"
+                    >
+                      <!-- 修改为手机端不显示顶部标签 -->
+                      <el-breadcrumb
+                        v-show="!isMobile"
+                        class="breadcrumb"
+                      >
                         <el-breadcrumb-item
                           v-for="item in matched.slice(1,matched.length)"
                           :key="item.path"
                         >{{ fmtTitle(item.meta.title,route) }}</el-breadcrumb-item>
                       </el-breadcrumb>
                     </el-col>
-                    <el-col :xs="12" :lg="9" :md="9" :sm="14" :xl="9">
-                      <div class="right-box">
+                    <el-col
+                      :xs="12"
+                      :lg="9"
+                      :md="9"
+                      :sm="14"
+                      :xl="9"
+                      class="flex items-center justify-end"
+                    >
+                      <div class="mr-1.5 flex items-center">
                         <Search />
                         <el-dropdown>
-                          <div class="dp-flex justify-content-center align-items height-full width-full">
-                            <span class="header-avatar" style="cursor: pointer">
+                          <div class="flex justify-center items-center h-full w-full">
+                            <span class="cursor-pointer flex justify-center items-center">
                               <CustomPic />
-                              <span style="margin-left: 5px">{{ userStore.userInfo.nickName }}</span>
+                              <span
+                                v-show="!isMobile"
+                                style="margin-left: 5px"
+                              >{{ userStore.userInfo.nickName }}</span>
                               <el-icon>
                                 <arrow-down />
                               </el-icon>
                             </span>
                           </div>
                           <template #dropdown>
-                            <el-dropdown-menu class="dropdown-group">
+                            <el-dropdown-menu>
                               <el-dropdown-item>
-                                <span style="font-weight: 600;">
+                                <span class="font-bold">
                                   当前角色：{{ userStore.userInfo.authority.authorityName }}
                                 </span>
                               </el-dropdown-item>
                               <template v-if="userStore.userInfo.authorities">
-                                <el-dropdown-item v-for="item in userStore.userInfo.authorities.filter(i=>i.authorityId!==userStore.userInfo.authorityId)" :key="item.authorityId" @click="changeUserAuth(item.authorityId)">
+                                <el-dropdown-item
+                                  v-for="item in userStore.userInfo.authorities.filter(i=>i.authorityId!==userStore.userInfo.authorityId)"
+                                  :key="item.authorityId"
+                                  @click="changeUserAuth(item.authorityId)"
+                                >
                                   <span>
                                     切换为：{{ item.authorityName }}
                                   </span>
                                 </el-dropdown-item>
                               </template>
-                              <el-dropdown-item icon="avatar" @click="toPerson">个人信息</el-dropdown-item>
-                              <el-dropdown-item icon="reading-lamp" @click="userStore.LoginOut">登 出</el-dropdown-item>
+                              <el-dropdown-item icon="avatar">
+                                <div
+                                  class="command-box"
+                                  style="display: flex"
+                                  @click="handleCommand"
+                                >
+                                  <div>指令菜单</div>
+                                  <div style="margin-left: 8px">
+                                    <span class="button">{{ first }}</span>
+                                    +
+                                    <span class="button">K</span>
+                                  </div>
+                                </div>
+                              </el-dropdown-item>
+                              <el-dropdown-item
+                                icon="avatar"
+                                @click="toPerson"
+                              >个人信息</el-dropdown-item>
+                              <el-dropdown-item
+                                icon="reading-lamp"
+                                @click="userStore.LoginOut"
+                              >登 出</el-dropdown-item>
                             </el-dropdown-menu>
                           </template>
                         </el-dropdown>
@@ -81,12 +164,16 @@
         <router-view
           v-if="reloadFlag"
           v-slot="{ Component }"
-          v-loading="loadingFlag"
-          element-loading-text="正在加载中"
           class="admin-box"
         >
-          <div>
-            <transition mode="out-in" name="el-fade-in-linear">
+          <div
+            v-loading="loadingFlag"
+            element-loading-text="正在加载中"
+          >
+            <transition
+              mode="out-in"
+              name="el-fade-in-linear"
+            >
               <keep-alive :include="routerStore.keepAliveRouters">
                 <component :is="Component" />
               </keep-alive>
@@ -95,17 +182,12 @@
         </router-view>
         <BottomInfo />
         <setting />
+        <CommandMenu ref="command" />
       </el-main>
     </el-container>
 
   </el-container>
 </template>
-
-<script>
-export default {
-  name: 'Layout',
-}
-</script>
 
 <script setup>
 import Aside from '@/view/layout/aside/index.vue'
@@ -113,14 +195,19 @@ import HistoryComponent from '@/view/layout/aside/historyComponent/history.vue'
 import Search from '@/view/layout/search/search.vue'
 import BottomInfo from '@/view/layout/bottomInfo/bottomInfo.vue'
 import CustomPic from '@/components/customPic/index.vue'
+import CommandMenu from '@/components/commandMenu/index.vue'
 import Setting from './setting/index.vue'
 import { setUserAuthority } from '@/api/user'
 import { emitter } from '@/utils/bus.js'
 import { computed, ref, onMounted, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { useUserStore } from '@/pinia/modules/user'
 import { useRouterStore } from '@/pinia/modules/router'
 import { fmtTitle } from '@/utils/fmtRouterTitle'
+import { useUserStore } from '@/pinia/modules/user'
+
+defineOptions({
+  name: 'Layout',
+})
 
 const router = useRouter()
 const route = useRoute()
@@ -130,7 +217,25 @@ const isCollapse = ref(false)
 const isSider = ref(true)
 const isMobile = ref(false)
 
+const first = ref('')
+const dialogVisible = ref(false)
 const initPage = () => {
+  // 判断当前用户的操作系统
+  if (window.localStorage.getItem('osType') === 'WIN') {
+    first.value = 'Ctrl'
+  } else {
+    first.value = '⌘'
+  }
+  // 当用户同时按下ctrl和k键的时候
+  const handleKeyDown = (e) => {
+    if (e.ctrlKey && e.key === 'k') {
+      // 阻止浏览器默认事件
+      e.preventDefault()
+      handleCommand()
+    }
+  }
+  window.addEventListener('keydown', handleKeyDown)
+
   const screenWidth = document.body.clientWidth
   if (screenWidth < 1000) {
     isMobile.value = true
@@ -148,6 +253,11 @@ const initPage = () => {
 }
 
 initPage()
+
+const command = ref()
+const handleCommand = () => {
+  command.value.open()
+}
 
 const loadingFlag = ref(false)
 onMounted(() => {
@@ -174,6 +284,18 @@ onMounted(() => {
 })
 
 const userStore = useUserStore()
+
+const asideWidth = () => {
+  if (isMobile.value) {
+    return isCollapse.value ? '0px' : '220px'
+  }
+  return isCollapse.value ? '54px' : '220px'
+}
+
+const getAsideWidth = () => {
+  if (isMobile.value) return '0px'
+  return isCollapse.value ? '54px' : '220px'
+}
 
 const textColor = computed(() => {
   if (userStore.sideMode === 'dark') {
@@ -202,10 +324,8 @@ const changeUserAuth = async(id) => {
     authorityId: id
   })
   if (res.code === 0) {
-    emitter.emit('closeAllPage')
-    setTimeout(() => {
-      window.location.reload()
-    }, 50)
+    window.sessionStorage.setItem('needCloseAll', 'true')
+    window.location.reload()
   }
 }
 
@@ -246,14 +366,18 @@ const changeShadow = () => {
 </script>
 
 <style lang="scss">
-@import '@/style/mobile.scss';
+.button {
+  font-size: 12px;
+  color: #666;
+  background:	rgb(250,250,250);
+  width: 25px!important;
+  padding: 4px 8px !important;
+  border: 1px solid #eaeaea;
+  margin-right: 4px;
+  border-radius: 4px;
+}
+:deep .el-overlay {
+  background-color: hsla(0,0%,100%,.9) !important;
+}
 
-.dark{
-  background-color: #191a23 !important;
-  color: #fff !important;
-}
-.light{
-  background-color: #fff !important;
-  color: #000 !important;
-}
 </style>

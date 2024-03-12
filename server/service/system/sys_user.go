@@ -3,11 +3,18 @@ package system
 import (
 	"errors"
 	"fmt"
+	"time"
+
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
+	systemRequest "github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
+	userExtRequest "github.com/flipped-aurora/gin-vue-admin/server/model/userext/request"
+	"github.com/flipped-aurora/gin-vue-admin/server/protobuf/manager"
 	"github.com/flipped-aurora/gin-vue-admin/server/utils"
-	uuid "github.com/satori/go.uuid"
+	"github.com/gin-gonic/gin"
+	"github.com/gofrs/uuid/v5"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
@@ -26,12 +33,14 @@ func (userService *UserService) Register(u system.SysUser) (userInter system.Sys
 	}
 	// 否则 附加uuid 密码hash加密 注册
 	u.Password = utils.BcryptHash(u.Password)
-	u.UUID = uuid.NewV4()
+	u.UUID = uuid.Must(uuid.NewV4())
+	u.UserExt.UserUUID = u.UUID.String()
 	err = global.GVA_DB.Create(&u).Error
 	return u, err
 }
 
 //@author: [piexlmax](https://github.com/piexlmax)
+//@author: [SliverHorn](https://github.com/SliverHorn)
 //@function: Login
 //@description: 用户登录
 //@param: u *model.SysUser
@@ -48,26 +57,8 @@ func (userService *UserService) Login(u *system.SysUser) (userInter *system.SysU
 		if ok := utils.BcryptCheck(u.Password, user.Password); !ok {
 			return nil, errors.New("密码错误")
 		}
-
-		var SysAuthorityMenus []system.SysAuthorityMenu
-		err = global.GVA_DB.Where("sys_authority_authority_id = ?", user.AuthorityId).Find(&SysAuthorityMenus).Error
-		if err != nil {
-			return
-		}
-
-		var MenuIds []string
-
-		for i := range SysAuthorityMenus {
-			MenuIds = append(MenuIds, SysAuthorityMenus[i].MenuId)
-		}
-
-		var am system.SysBaseMenu
-		ferr := global.GVA_DB.First(&am, "name = ? and id in (?)", user.Authority.DefaultRouter, MenuIds).Error
-		if errors.Is(ferr, gorm.ErrRecordNotFound) {
-			user.Authority.DefaultRouter = "404"
-		}
+		MenuServiceApp.UserAuthorityDefaultRouter(&user)
 	}
-
 	return &user, err
 }
 
@@ -163,13 +154,15 @@ func (userService *UserService) SetUserAuthorities(id uint, authorityIds []uint)
 //@return: err error
 
 func (userService *UserService) DeleteUser(id int) (err error) {
-	var user system.SysUser
-	err = global.GVA_DB.Where("id = ?", id).Delete(&user).Error
-	if err != nil {
-		return err
-	}
-	err = global.GVA_DB.Delete(&[]system.SysUserAuthority{}, "sys_user_id = ?", id).Error
-	return err
+	return global.GVA_DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Where("id = ?", id).Delete(&system.SysUser{}).Error; err != nil {
+			return err
+		}
+		if err := tx.Delete(&[]system.SysUserAuthority{}, "sys_user_id = ?", id).Error; err != nil {
+			return err
+		}
+		return nil
+	})
 }
 
 //@author: [piexlmax](https://github.com/piexlmax)
@@ -179,39 +172,45 @@ func (userService *UserService) DeleteUser(id int) (err error) {
 //@return: err error, user model.SysUser
 
 func (userService *UserService) SetUserInfo(req system.SysUser) error {
-	return global.GVA_DB.Updates(&req).Error
+	return global.GVA_DB.Model(&system.SysUser{}).
+		Select("updated_at", "nick_name", "header_img", "phone", "email", "sideMode", "enable").
+		Where("id=?", req.ID).
+		Updates(map[string]interface{}{
+			"updated_at": time.Now(),
+			"nick_name":  req.NickName,
+			"header_img": req.HeaderImg,
+			"phone":      req.Phone,
+			"email":      req.Email,
+			"side_mode":  req.SideMode,
+			"enable":     req.Enable,
+		}).Error
 }
 
 //@author: [piexlmax](https://github.com/piexlmax)
-//@function: GetUserInfo
-//@description: 获取用户信息
-//@param: uuid uuid.UUID
-//@return: err error, user system.SysUser
+//@function: SetUserInfo
+//@description: 设置用户信息
+//@param: reqUser model.SysUser
+//@return: err error, user model.SysUser
 
+func (userService *UserService) SetSelfInfo(req system.SysUser) error {
+	return global.GVA_DB.Model(&system.SysUser{}).
+		Where("id=?", req.ID).
+		Updates(req).Error
+}
+
+// @author: [piexlmax](https://github.com/piexlmax)
+// @author: [SliverHorn](https://github.com/SliverHorn)
+// @function: GetUserInfo
+// @description: 获取用户信息
+// @param: uuid uuid.UUID
+// @return: err error, user system.SysUser
 func (userService *UserService) GetUserInfo(uuid uuid.UUID) (user system.SysUser, err error) {
 	var reqUser system.SysUser
-	err = global.GVA_DB.Preload("Authorities").Preload("Authority").First(&reqUser, "uuid = ?", uuid).Error
+	err = global.GVA_DB.Preload("Authorities").Preload("Authority").Preload("UserExt").First(&reqUser, "uuid = ?", uuid).Error
 	if err != nil {
 		return reqUser, err
 	}
-
-	var SysAuthorityMenus []system.SysAuthorityMenu
-	err = global.GVA_DB.Where("sys_authority_authority_id = ?", reqUser.AuthorityId).Find(&SysAuthorityMenus).Error
-	if err != nil {
-		return
-	}
-
-	var MenuIds []string
-
-	for i := range SysAuthorityMenus {
-		MenuIds = append(MenuIds, SysAuthorityMenus[i].MenuId)
-	}
-
-	var am system.SysBaseMenu
-	ferr := global.GVA_DB.First(&am, "name = ? and id in (?)", reqUser.Authority.DefaultRouter, MenuIds).Error
-	if errors.Is(ferr, gorm.ErrRecordNotFound) {
-		reqUser.Authority.DefaultRouter = "404"
-	}
+	MenuServiceApp.UserAuthorityDefaultRouter(&reqUser)
 	return reqUser, err
 }
 
@@ -223,7 +222,7 @@ func (userService *UserService) GetUserInfo(uuid uuid.UUID) (user system.SysUser
 
 func (userService *UserService) FindUserById(id int) (user *system.SysUser, err error) {
 	var u system.SysUser
-	err = global.GVA_DB.Where("`id` = ?", id).First(&u).Error
+	err = global.GVA_DB.Where("id = ?", id).First(&u).Error
 	return &u, err
 }
 
@@ -235,7 +234,7 @@ func (userService *UserService) FindUserById(id int) (user *system.SysUser, err 
 
 func (userService *UserService) FindUserByUuid(uuid string) (user *system.SysUser, err error) {
 	var u system.SysUser
-	if err = global.GVA_DB.Where("`uuid` = ?", uuid).First(&u).Error; err != nil {
+	if err = global.GVA_DB.Where("uuid = ?", uuid).First(&u).Error; err != nil {
 		return &u, errors.New("用户不存在")
 	}
 	return &u, nil
@@ -250,4 +249,87 @@ func (userService *UserService) FindUserByUuid(uuid string) (user *system.SysUse
 func (userService *UserService) ResetPassword(ID uint) (err error) {
 	err = global.GVA_DB.Model(&system.SysUser{}).Where("id = ?", ID).Update("password", utils.BcryptHash("123456")).Error
 	return err
+}
+
+func (userService *UserService) GetUserInfoViaToken(ginCtx *gin.Context) (user system.SysUser, err error) {
+	var reqUser system.SysUser
+
+	userClaims := utils.GetUserInfo(ginCtx)
+	if userClaims == nil {
+		return reqUser, fmt.Errorf("token解析失败")
+	}
+
+	err = global.GVA_DB.Preload("Authorities").Preload("Authority").Preload("UserExt").First(&reqUser, "id = ?", userClaims.BaseClaims.ID).Error
+	if err != nil {
+		return reqUser, err
+	}
+	return reqUser, err
+}
+
+func (userService *UserService) GetUserInfoListV2(info userExtRequest.UserListSearch) (userList []system.SysUser, total int64, err error) {
+	limit := info.PageSize
+	offset := info.PageSize * (info.Page - 1)
+	db := global.GVA_DB.Model(&system.SysUser{})
+	err = db.Count(&total).Error
+	if err != nil {
+		return
+	}
+
+	var userExtArgs []interface{}
+	if info.Enable != nil {
+		userExtArgs = append(userExtArgs, "enable = ?", *info.Enable)
+	}
+
+	condition := db.Limit(limit).Offset(offset).Preload("Authorities").Preload("Authority").Preload("UserExt", userExtArgs...)
+
+	err = condition.Find(&userList).Error
+	return userList, total, err
+}
+
+func (userService *UserService) BatchQuery(condition systemRequest.BatchQueryUser) (list []system.SysUser, err error) {
+	db := global.GVA_DB.Model(system.SysUser{})
+	var existsCondition bool
+	if len(condition.UUID) > 0 {
+		db = db.Where("`uuid` IN ?", condition.UUID)
+		existsCondition = true
+	}
+	if len(condition.Email) > 0 {
+		db = db.Where("`email` IN ?", condition.Email)
+		existsCondition = true
+	}
+
+	if !existsCondition {
+		return list, nil
+	}
+	var userList []system.SysUser
+	err = db.Preload("Authorities").Preload("Authority").Preload("UserExt").Find(&userList).Error
+	return userList, err
+}
+
+func (userService *UserService) GetAllManagerUserInfo() []*manager.UserInfo {
+	enable := 1
+	cond := userExtRequest.UserListSearch{Enable: &enable}
+	cond.Page = 1
+	cond.PageSize = -1
+	userQuery, _, err := userService.GetUserInfoListV2(cond)
+	if err != nil {
+		global.GVA_LOG.Error("查询用户数据失败", zap.Error(err))
+		return nil
+	}
+
+	userInfoArr := make([]*manager.UserInfo, 0)
+	for _, v := range userQuery {
+		tmp := v.BuildManagerUserInfo()
+		userInfoArr = append(userInfoArr, tmp)
+	}
+	return userInfoArr
+}
+
+func (userService *UserService) GetUserInfoByEmail(email string) (user system.SysUser, err error) {
+	var reqUser system.SysUser
+	err = global.GVA_DB.Preload("Authorities").Preload("Authority").Preload("UserExt").First(&reqUser, "email = ?", email).Error
+	if err != nil {
+		return reqUser, err
+	}
+	return reqUser, err
 }

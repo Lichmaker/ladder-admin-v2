@@ -1,21 +1,23 @@
 package router
 
 import (
-	"github.com/flipped-aurora/gin-vue-admin/server/router/article"
-	"github.com/flipped-aurora/gin-vue-admin/server/router/datastat"
+	"github.com/flipped-aurora/gin-vue-admin/server/router/announcementModel"
+	"github.com/flipped-aurora/gin-vue-admin/server/router/datastatisticsmodel"
 	"github.com/flipped-aurora/gin-vue-admin/server/router/example"
-	"github.com/flipped-aurora/gin-vue-admin/server/router/syscontrol"
 	"github.com/flipped-aurora/gin-vue-admin/server/router/system"
-	"github.com/flipped-aurora/gin-vue-admin/server/router/v2rayUser"
+	"github.com/flipped-aurora/gin-vue-admin/server/router/userDataUsageModel"
+	"github.com/flipped-aurora/gin-vue-admin/server/router/userext"
+	"github.com/flipped-aurora/gin-vue-admin/server/router/v2raynode"
 )
 
 type RouterGroup struct {
-	System     system.RouterGroup
-	Example    example.RouterGroup
-	Article    article.RouterGroup
-	Datastat   datastat.RouterGroup
-	SysControl syscontrol.RouterGroup
-	V2rayuser  v2rayUser.RouterGroup
+	System              system.RouterGroup
+	Example             example.RouterGroup
+	Datastatisticsmodel datastatisticsmodel.RouterGroup
+	Userext             userext.RouterGroup
+	UserDataUsageModel  userDataUsageModel.RouterGroup
+	AnnouncementModel   announcementModel.RouterGroup
+	V2raynode           v2raynode.RouterGroup
 }
 
 var RouterGroupApp = new(RouterGroup)

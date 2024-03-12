@@ -13,7 +13,7 @@ import (
 
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
-	uuid "github.com/satori/go.uuid"
+	"github.com/gofrs/uuid/v5"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -32,7 +32,7 @@ func (h MysqlInitHandler) WriteConfig(ctx context.Context) error {
 	}
 	global.GVA_CONFIG.System.DbType = "mysql"
 	global.GVA_CONFIG.Mysql = c
-	global.GVA_CONFIG.JWT.SigningKey = uuid.NewV4().String()
+	global.GVA_CONFIG.JWT.SigningKey = uuid.Must(uuid.NewV4()).String()
 	cs := utils.StructToMap(global.GVA_CONFIG)
 	for k, v := range cs {
 		global.GVA_VP.Set(k, v)
@@ -51,6 +51,9 @@ func (h MysqlInitHandler) EnsureDB(ctx context.Context, conf *request.InitDB) (n
 	if c.Dbname == "" {
 		return ctx, nil
 	} // 如果没有数据库名, 则跳出初始化数据
+
+	// 初始化的时候，为了批量导入数据，更改配置
+	c.Config = c.Config + "&multiStatements=true"
 
 	dsn := conf.MysqlEmptyDsn()
 	createSql := fmt.Sprintf("CREATE DATABASE IF NOT EXISTS `%s` DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_general_ci;", c.Dbname)

@@ -1,76 +1,49 @@
 version: "3"
 
-# 声明一个名为network的networks,subnet为network的子网地址,默认网关是177.7.0.1
+# 需要提前创建network： docker network create la-network
 networks:
-  network:
-    ipam:
-      driver: default
-      config:
-        - subnet: '177.7.0.0/16'
-        
-# 设置mysql，redis持久化保存
-volumes:
-  mysql:
-  redis:
+  la-network:
+    external: true
+
   
 services:
-  web:
+  ladder-admin-web: 
+    image: lichmaker/ladder-admin-web:${VERSION:-1.0}
     build:
       context: ../../web
       dockerfile: ./Dockerfile
-    container_name: gva-web
+    container_name: ladder-admin-web
     restart: always
     ports:
       - '8080:8080'
     depends_on:
-      - server
+      - ladder-admin-server
     command: [ 'nginx-debug', '-g', 'daemon off;' ]
     networks:
-      network:
-        ipv4_address: 177.7.0.11
+      - la-network
 
-  server:
+  ladder-admin-server:
+    image: lichmaker/ladder-admin-server:${VERSION:-1.0}
     build:
       context: ../../server
       dockerfile: ./Dockerfile
-    container_name: gva-server
+    container_name: ladder-admin-server
     restart: always
+    depends_on:
+      - v2ray-manager-server
     ports:
       - '8888:8888'
-    depends_on:
-      - mysql
-      - redis
-    links:
-      - mysql
-      - redis
     networks:
-      network:
-        ipv4_address: 177.7.0.12
+      - la-network
 
-  mysql:
-    image: mysql:8.0.21       # 如果您是 arm64 架构：如 MacOS 的 M1，请修改镜像为 image: mysql/mysql-server:8.0.21
-    container_name: gva-mysql
-    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci #设置utf8字符集
+  v2ray-manager-server:
+    image: lichmaker/v2ray-manager:${VERSION:-1.0}
+    build:
+      context: ../../v2ray-manager
+      dockerfile: ./Dockerfile
+    container_name: v2ray-manager-server
     restart: always
     ports:
-      - "13306:3306"  # host物理直接映射端口为13306
-    environment:
-      MYSQL_DATABASE: 'qmPlus' # 初始化启动时要创建的数据库的名称
-      MYSQL_ROOT_PASSWORD: 'Aa@6447985' # root管理员用户密码
-    volumes:
-      - mysql:/var/lib/mysql
+      - '10088:10088'
     networks:
-      network:
-        ipv4_address: 177.7.0.13
-
-  redis:
-    image: redis:6.0.6
-    container_name: gva-redis # 容器名
-    restart: always
-    ports:
-      - '16379:6379'
-    volumes:
-      - redis:/data
-    networks:
-      network:
-        ipv4_address: 177.7.0.14
+      - la-network

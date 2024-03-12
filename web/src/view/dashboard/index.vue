@@ -1,280 +1,205 @@
 <template>
-  <div class="page">
-    <div class="gva-card-box">
-      <div class="gva-card gva-top-card">
-        <div class="gva-top-card-left">
-          <div class="gva-top-card-left-title">欢迎使用 Ladder Admin 2.0</div>
-          <div class="gva-top-card-left-rows">
-            <el-row>
-              <el-col :span="8" :xs="24" :sm="8">
-                <div class="flex-center">
-                  <el-icon class="dashboard-icon">
-                    <sort />
-                  </el-icon>
-                  本月已用流量 (1231231)
-                </div>
-              </el-col>
-              <el-col :span="8" :xs="24" :sm="8">
-                <div class="flex-center">
-                  <el-icon class="dashboard-icon">
-                    <avatar />
-                  </el-icon>
-                  本月剩余流量 (24001)
-                </div>
-              </el-col>
-            </el-row>
-          </div>
-          <div>
-            <div class="gva-top-card-left-item">
-              使用教学：
-              <a
-                style="color: #409eff"
-                target="view_window"
-                href="https://www.bilibili.com/video/BV1Rg411u7xH/"
-                >https://www.bilibili.com/video/BV1Rg411u7xH</a
-              >
-            </div>
-          </div>
-        </div>
+  <el-card class="dashboard-container">
+    <template #header>
+      <div class="header">
+        <h1>Welcome Ladder Admin V2!</h1>
       </div>
-    </div>
-    <div class="gva-card-box">
-      <el-card class="gva-card quick-entrance">
-        <template #header>
-          <div class="card-header">
-            <span>快捷入口</span>
-          </div>
-        </template>
-        <el-row :gutter="20">
-          <el-col
-            v-for="(card, key) in toolCards"
-            :key="key"
-            :span="4"
-            :xs="8"
-            class="quick-entrance-items"
-            @click="toTarget(card.name)"
+    </template>
+
+    <el-card class="announcement-card">
+      <template #header>
+        <div class="announcement-header">
+          <h3>近期公告</h3>
+        </div>
+      </template>
+      <div class="demo-collapse">
+        <el-collapse
+          v-for="(item,index) in announcementList"
+          :key="index"
+          v-model="collapseActive"
+          :accordion="accordionOpt"
+        >
+          <el-collapse-item
+            :title="item.title"
+            :name="index"
           >
-            <div class="quick-entrance-item">
-              <div
-                class="quick-entrance-item-icon"
-                :style="{ backgroundColor: card.bg }"
-              >
-                <el-icon>
-                  <component :is="card.icon" :style="{ color: card.color }" />
-                </el-icon>
-              </div>
-              <p>{{ card.label }}</p>
-            </div>
-          </el-col>
-        </el-row>
-      </el-card>
-      <!-- <div class="quick-entrance-title"></div> -->
-    </div>
-    <div class="gva-card-box">
-      <div class="gva-card">
-        <div class="card-header">
-          <span>最新讯息</span>
-        </div>
-        <div class="echart-box">
-          <el-row :gutter="20">
-            <el-col :xs="24" :sm="6">
-              <dashboardTable />
-            </el-col>
-          </el-row>
-        </div>
+            <div v-html="item.content" />
+          </el-collapse-item>
+        </el-collapse>
       </div>
+    </el-card>
+    <div class="card-content-container">
+
+      <el-card
+        class="usage-card"
+        style="width: 30%;"
+      >
+        <el-descriptions
+          title="当前流量包信息"
+          :column="2"
+          direction="vertical"
+        >
+          <el-descriptions-item
+            label="生效日期"
+            width="50%"
+          >{{ dashboardInfo.using.start }}</el-descriptions-item>
+          <el-descriptions-item label="到期时间">{{ dashboardInfo.using.end }}</el-descriptions-item>
+        </el-descriptions>
+        <el-descriptions
+          title="用量"
+          :column="2"
+          direction="vertical"
+        >
+          <el-descriptions-item
+            label="总量"
+            width="50%"
+          >{{ dashboardInfo.using.standardData }}</el-descriptions-item>
+          <el-descriptions-item label="剩余">{{ dashboardInfo.using.remain }}</el-descriptions-item>
+          <el-descriptions-item> <el-progress
+            :percentage="dashboardInfo.using.percentage"
+            :stroke-width="8"
+            striped
+            striped-flow
+            :duration="20"
+          /></el-descriptions-item>
+        </el-descriptions>
+      </el-card>
+
+      <el-card
+        class="qrcode-card"
+        style="width: 30%;"
+      >
+        <el-descriptions
+          title="订阅二维码"
+          :column="1"
+          direction="vertical"
+        >
+          <el-descriptions-item
+            label="点击查看大图"
+          >  <el-image
+            style="width: 100px; height: 100px"
+            :src="dashboardInfo.base.QRCode"
+            :zoom-rate="1.2"
+            :max-scale="7"
+            :min-scale="0.2"
+            :preview-src-list="QRCodeSrcList"
+            :initial-index="4"
+            fit="cover"
+            close-on-press-escape
+            :hide-on-click-modal="true"
+          /></el-descriptions-item>
+          <el-descriptions-item
+            label="订阅链接"
+            class="subscribeURL"
+          >{{ dashboardInfo.base.subUrl }}
+            <el-button
+              id="copySubURLButton"
+              type="primary"
+              :icon="CopyDocument"
+              circle
+              size="small"
+              @click="copySubURLFunc(dashboardInfo.base.subUrl)"
+            />
+          </el-descriptions-item>
+
+        </el-descriptions>
+
+      </el-card>
     </div>
-  </div>
+
+  </el-card>
 </template>
 
 <script setup>
-import EchartsLine from "@/view/dashboard/dashboardCharts/echartsLine.vue";
-import DashboardTable from "@/view/dashboard/dashboardTable/dashboardTable.vue";
-import { ref } from "vue";
-import { useRouter } from "vue-router";
+import {
+  CopyDocument,
+} from '@element-plus/icons-vue'
+import { onMounted, ref } from 'vue'
+import { getAnnouncementList } from '@/api/announcement'
+import { getDashboardInfo } from '@/api/userExt'
+import { ElMessage } from 'element-plus'
 
-const toolCards = ref([
-  {
-    label: "我的二维码",
-    icon: "menu",
-    name: "menu",
-    color: "#b37feb",
-    bg: "rgba(179, 127, 235,.3)",
-  },
-  {
-    label: "查看流量",
-    icon: "monitor",
-    name: "user",
-    color: "#ff9c6e",
-    bg: "rgba(255, 156, 110,.3)",
-  },
-]);
+defineOptions({
+  name: 'Dashboard',
+})
 
-const router = useRouter();
+const collapseActive = ref(0) // 控制默认展开第一个
 
-const toTarget = (name) => {
-  router.push({ name });
-};
+const QRCodeSrcList = ref([])
+
+const dashboardInfo = ref({
+  base: {},
+  using: {},
+})
+const announcementList = ref([])
+onMounted(async() => {
+  const res = await getAnnouncementList({ page: 1, pageSize: 5 })
+  console.log(res)
+  announcementList.value = res.data.list
+
+  const dashboardInfoQuery = await getDashboardInfo(false)
+  if (dashboardInfoQuery.code === 0) {
+    dashboardInfo.value = dashboardInfoQuery.data
+    console.log(dashboardInfo.value)
+    QRCodeSrcList.value.push(dashboardInfo.value.base.QRCode)
+    console.log(QRCodeSrcList.value)
+  } else {
+    console.log(dashboardInfoQuery)
+    ElMessage({
+      type: 'error',
+      msg: '请求失败：' + dashboardInfoQuery.msg
+    })
+  }
+})
+const accordionOpt = ref(true)
+
+const copySubURLFunc = (subURL) => {
+  if (navigator.clipboard !== undefined) {
+    // 浏览器支持
+    navigator.clipboard.writeText(subURL).then(function() {
+      /* clipboard successfully set */
+      console.log('navigator.clipboard 复制成功')
+    }, function() {
+      /* clipboard write failed */
+      console.log('navigator.clipboard 复制失败')
+    })
+  } else {
+    // 浏览器不支持，使用老方法
+    const oInput = document.createElement('input')
+    oInput.value = subURL
+    document.body.appendChild(oInput)
+    oInput.select() // 选择对象;
+    console.log('使用老方法复制' + oInput.value)
+    document.execCommand('Copy') // 执行浏览器复制命令
+    oInput.remove()
+  }
+}
 </script>
-<script>
-export default {
-  name: "Dashboard",
-};
-</script>
 
-<style lang="scss" scoped>
-@mixin flex-center {
-  display: flex;
-  align-items: center;
-}
-.page {
-  background: #f0f2f5;
-  padding: 0;
-  .gva-card-box {
-    padding: 12px 16px;
-    & + .gva-card-box {
-      padding-top: 0px;
-    }
-  }
-  .gva-card {
-    box-sizing: border-box;
-    background-color: #fff;
-    border-radius: 2px;
-    height: auto;
-    padding: 26px 30px;
-    overflow: hidden;
-    box-shadow: 0 0 7px 1px rgba(0, 0, 0, 0.03);
-  }
-  .gva-top-card {
-    height: 260px;
-    @include flex-center;
-    justify-content: space-between;
-    color: #777;
-    &-left {
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      &-title {
-        font-size: 22px;
-        color: #343844;
-      }
-      &-dot {
-        font-size: 16px;
-        color: #6b7687;
-        margin-top: 24px;
-      }
-      &-rows {
-        // margin-top: 15px;
-        margin-top: 18px;
-        color: #6b7687;
-        width: 600px;
-        align-items: center;
-      }
-      &-item {
-        + .gva-top-card-left-item {
-          margin-top: 24px;
-        }
-        margin-top: 14px;
-      }
-    }
-    &-right {
-      height: 600px;
-      width: 600px;
-      margin-top: 28px;
-    }
-  }
-  ::v-deep(.el-card__header) {
-    padding: 0;
-    border-bottom: none;
-  }
-  .card-header {
-    padding-bottom: 20px;
-    border-bottom: 1px solid #e8e8e8;
-  }
-  .quick-entrance-title {
-    height: 30px;
-    font-size: 22px;
-    color: #333;
-    width: 100%;
-    border-bottom: 1px solid #eee;
-  }
-  .quick-entrance-items {
-    @include flex-center;
-    justify-content: center;
-    text-align: center;
-    color: #333;
-    .quick-entrance-item {
-      padding: 16px 28px;
-      margin-top: -16px;
-      margin-bottom: -16px;
-      border-radius: 4px;
-      transition: all 0.2s;
-      &:hover {
-        box-shadow: 0px 0px 7px 0px rgba(217, 217, 217, 0.55);
-      }
-      cursor: pointer;
-      height: auto;
-      text-align: center;
-      // align-items: center;
-      &-icon {
-        width: 50px;
-        height: 50px !important;
-        border-radius: 8px;
-        @include flex-center;
-        justify-content: center;
-        margin: 0 auto;
-        i {
-          font-size: 24px;
-        }
-      }
-      p {
-        margin-top: 10px;
-      }
-    }
-  }
-  .echart-box {
-    padding: 14px;
-  }
-}
-.dashboard-icon {
-  font-size: 20px;
-  color: rgb(85, 160, 248);
-  width: 30px;
-  height: 30px;
-  margin-right: 10px;
-  @include flex-center;
-}
-.flex-center {
-  @include flex-center;
+<style scoped>
+
+.announcement-card {
+    margin-bottom: 10px;
 }
 
-//小屏幕不显示右侧，将登录框居中
-@media (max-width: 750px) {
-  .gva-card {
-    padding: 20px 10px !important;
-    .gva-top-card {
-      height: auto;
-      &-left {
-        &-title {
-          font-size: 20px !important;
-        }
-        &-rows {
-          margin-top: 15px;
-          align-items: center;
-        }
-      }
-      &-right {
-        display: none;
-      }
-    }
-    .gva-middle-card {
-      &-item {
-        line-height: 20px;
-      }
-    }
-    .dashboard-icon {
-      font-size: 18px;
-    }
-  }
+.card-content-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
 }
+
+.card-content-container :deep(.el-card) {
+    margin-right: 10px;
+}
+
+.dashboard-container :deep(.el-card__header) {
+    padding-top: 0;
+    padding-bottom: 0;
+  border-bottom: 0px;
+}
+
+.announcement-card :deep(.el-card__header) {
+  margin-top: 30px;
+}
+
 </style>

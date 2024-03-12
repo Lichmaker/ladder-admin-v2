@@ -38,11 +38,12 @@ func NotEmpty() string {
 	return "notEmpty"
 }
 
-//@author: [zooqkl](https://github.com/zooqkl)
-//@function: RegexpMatch
-//@description: 正则校验 校验输入项是否满足正则表达式
-//@param:  rule string
-//@return: string
+// @author: [zooqkl](https://github.com/zooqkl)
+// @function: RegexpMatch
+// @description: 正则校验 校验输入项是否满足正则表达式
+// @param:  rule string
+// @return: string
+
 func RegexpMatch(rule string) string {
 	return "regexp=" + rule
 }
@@ -107,13 +108,11 @@ func Gt(mark string) string {
 	return "gt=" + mark
 }
 
-//
-//@author: [piexlmax](https://github.com/piexlmax)
-//@function: Verify
-//@description: 校验方法
-//@param: st interface{}, roleMap Rules(入参实例，规则map)
-//@return: err error
-
+// @author: [piexlmax](https://github.com/piexlmax)
+// @function: Verify
+// @description: 校验方法
+// @param: st interface{}, roleMap Rules(入参实例，规则map)
+// @return: err error
 func Verify(st interface{}, roleMap Rules) (err error) {
 	compareMap := map[string]bool{
 		"lt": true,
@@ -136,6 +135,11 @@ func Verify(st interface{}, roleMap Rules) (err error) {
 	for i := 0; i < num; i++ {
 		tagVal := typ.Field(i)
 		val := val.Field(i)
+		if tagVal.Type.Kind() == reflect.Struct {
+			if err = Verify(val.Interface(), roleMap); err != nil {
+				return err
+			}
+		}
 		if len(roleMap[tagVal.Name]) > 0 {
 			for _, v := range roleMap[tagVal.Name] {
 				switch {
@@ -166,7 +170,9 @@ func Verify(st interface{}, roleMap Rules) (err error) {
 
 func compareVerify(value reflect.Value, VerifyStr string) bool {
 	switch value.Kind() {
-	case reflect.String, reflect.Slice, reflect.Array:
+	case reflect.String:
+		return compare(len([]rune(value.String())), VerifyStr)
+	case reflect.Slice, reflect.Array:
 		return compare(value.Len(), VerifyStr)
 	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
 		return compare(value.Uint(), VerifyStr)
@@ -187,7 +193,7 @@ func compareVerify(value reflect.Value, VerifyStr string) bool {
 
 func isBlank(value reflect.Value) bool {
 	switch value.Kind() {
-	case reflect.String:
+	case reflect.String, reflect.Slice:
 		return value.Len() == 0
 	case reflect.Bool:
 		return !value.Bool()

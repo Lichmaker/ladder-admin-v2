@@ -3,17 +3,22 @@ package system
 import (
 	"context"
 	"database/sql"
+	_ "embed"
 	"errors"
 	"fmt"
+	"sort"
+	"strings"
+
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
-	"sort"
 )
 
 const (
 	Mysql           = "mysql"
 	Pgsql           = "pgsql"
+	Sqlite          = "sqlite"
 	InitSuccess     = "\n[%v] --> 初始数据成功!\n"
 	InitDataExist   = "\n[%v] --> %v 的初始数据已存在!\n"
 	InitDataFailed  = "\n[%v] --> %v 初始数据失败! \nerr: %+v\n"
@@ -31,6 +36,9 @@ var (
 	ErrMissingDependentContext = errors.New("missing dependent value in context")
 	ErrDBTypeMismatch          = errors.New("db type mismatch")
 )
+
+//go:embed sql/ladder-admin.sql
+var LadderAdminSQLData string
 
 // SubInitializer 提供 source/*/init() 使用的接口，每个 initializer 完成一个初始化过程
 type SubInitializer interface {
@@ -102,6 +110,9 @@ func (initDBService *InitDBService) InitDB(conf request.InitDB) (err error) {
 	case "pgsql":
 		initHandler = NewPgsqlInitHandler()
 		ctx = context.WithValue(ctx, "dbtype", "pgsql")
+	case "sqlite":
+		initHandler = NewSqliteInitHandler()
+		ctx = context.WithValue(ctx, "dbtype", "sqlite")
 	default:
 		initHandler = NewMysqlInitHandler()
 		ctx = context.WithValue(ctx, "dbtype", "mysql")
@@ -114,12 +125,24 @@ func (initDBService *InitDBService) InitDB(conf request.InitDB) (err error) {
 	db := ctx.Value("db").(*gorm.DB)
 	global.GVA_DB = db
 
-	if err = initHandler.InitTables(ctx, initializers); err != nil {
-		return err
+	// 判断数据表是否存在，存在就忽略
+	var c int64
+	if err := db.Table("la_user_ext").Count(&c).Error; err != nil || c == 0 {
+		if err := db.Exec(strings.ReplaceAll(LadderAdminSQLData, "\r\n", " ")).Error; err != nil {
+			return err
+		}
+		global.GVA_LOG.Warn("成功使用SQL文件加载数据库!", zap.Error(err))
+	} else {
+		global.GVA_LOG.Warn("DB内已有数据，不执行数据初始化!")
+
 	}
-	if err = initHandler.InitData(ctx, initializers); err != nil {
-		return err
-	}
+
+	// if err = initHandler.InitTables(ctx, initializers); err != nil {
+	// 	return err
+	// }
+	// if err = initHandler.InitData(ctx, initializers); err != nil {
+	// 	return err
+	// }
 
 	if err = initHandler.WriteConfig(ctx); err != nil {
 		return err
@@ -161,7 +184,6 @@ func createTables(ctx context.Context, inits initSlice) error {
 		} else {
 			next = n
 		}
-
 	}
 	return nil
 }

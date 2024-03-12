@@ -7,59 +7,101 @@
       <div class="gva-btn-list">
         <upload-common
           v-model:imageCommon="imageCommon"
-          class="upload-btn"
           @on-success="getTableData"
         />
         <upload-image
           v-model:imageUrl="imageUrl"
           :file-size="512"
           :max-w-h="1080"
-          class="upload-btn"
           @on-success="getTableData"
         />
-
-        <el-form ref="searchForm" :inline="true" :model="search">
-          <el-form-item label="">
-            <el-input v-model="search.keyword" class="keyword" placeholder="请输入文件名或备注" />
-          </el-form-item>
-
-          <el-form-item>
-            <el-button size="small" type="primary" icon="search" @click="getTableData">查询</el-button>
-          </el-form-item>
-        </el-form>
-
+        <el-input
+          v-model="search.keyword"
+          class="keyword"
+          placeholder="请输入文件名或备注"
+        />
+        <el-button
+          type="primary"
+          icon="search"
+          @click="getTableData"
+        >查询</el-button>
       </div>
 
       <el-table :data="tableData">
-        <el-table-column align="left" label="预览" width="100">
+        <el-table-column
+          align="left"
+          label="预览"
+          width="100"
+        >
           <template #default="scope">
-            <CustomPic pic-type="file" :pic-src="scope.row.url" />
+            <CustomPic
+              pic-type="file"
+              :pic-src="scope.row.url"
+              preview
+            />
           </template>
         </el-table-column>
-        <el-table-column align="left" label="日期" prop="UpdatedAt" width="180">
+        <el-table-column
+          align="left"
+          label="日期"
+          prop="UpdatedAt"
+          width="180"
+        >
           <template #default="scope">
             <div>{{ formatDate(scope.row.UpdatedAt) }}</div>
           </template>
         </el-table-column>
-        <el-table-column align="left" label="文件名/备注" prop="name" width="180">
+        <el-table-column
+          align="left"
+          label="文件名/备注"
+          prop="name"
+          width="180"
+        >
           <template #default="scope">
-            <div class="name" @click="editFileNameFunc(scope.row)">{{ scope.row.name }}</div>
+            <div
+              class="name"
+              @click="editFileNameFunc(scope.row)"
+            >{{ scope.row.name }}</div>
           </template>
         </el-table-column>
-        <el-table-column align="left" label="链接" prop="url" min-width="300" />
-        <el-table-column align="left" label="标签" prop="tag" width="100">
+        <el-table-column
+          align="left"
+          label="链接"
+          prop="url"
+          min-width="300"
+        />
+        <el-table-column
+          align="left"
+          label="标签"
+          prop="tag"
+          width="100"
+        >
           <template #default="scope">
             <el-tag
-              :type="scope.row.tag === 'jpg' ? 'primary' : 'success'"
+              :type="scope.row.tag === 'jpg' ? 'info' : 'success'"
               disable-transitions
             >{{ scope.row.tag }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column align="left" label="操作" width="160">
+        <el-table-column
+          align="left"
+          label="操作"
+          width="160"
+        >
           <template #default="scope">
-            <el-button size="small" icon="download" type="primary" link @click="downloadFile(scope.row)">下载</el-button>
-            <el-button size="small" icon="delete" type="primary" link @click="deleteFileFunc(scope.row)">删除</el-button>
+            <el-button
+              icon="download"
+              type="primary"
+              link
+              @click="downloadFile(scope.row)"
+            >下载</el-button>
+            <el-button
+              icon="delete"
+              type="primary"
+              link
+              @click="deleteFileFunc(scope.row)"
+            >删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -82,7 +124,6 @@
 <script setup>
 import { getFileList, deleteFile, editFileName } from '@/api/fileUploadAndDownload'
 import { downloadImage } from '@/utils/downloadImg'
-import { useUserStore } from '@/pinia/modules/user'
 import CustomPic from '@/components/customPic/index.vue'
 import UploadImage from '@/components/upload/image.vue'
 import UploadCommon from '@/components/upload/common.vue'
@@ -92,8 +133,11 @@ import WarningBar from '@/components/warningBar/warningBar.vue'
 import { ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
+defineOptions({
+  name: 'Upload',
+})
+
 const path = ref(import.meta.env.VITE_BASE_API)
-const userStore = useUserStore()
 
 const imageUrl = ref('')
 const imageCommon = ref('')
@@ -195,18 +239,9 @@ const editFileNameFunc = async(row) => {
 }
 </script>
 
-<script>
-
-export default {
-  name: 'Upload',
-}
-</script>
 <style scoped>
 .name {
   cursor: pointer;
 }
 
-.upload-btn + .upload-btn {
-  margin-left: 12px;
-}
 </style>

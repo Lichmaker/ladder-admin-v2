@@ -1,0 +1,42 @@
+version: '3.8'
+
+# 需要提前创建network： docker network create la-network
+networks:
+  la-network:
+    external: true
+
+
+volumes:
+  ladder-admin-redis-data:
+    driver: local
+  ladder-admin-mysql-data:
+    driver: local
+
+services:
+  ladder-admin-mysql:
+    image: mysql:8.0.32
+    container_name: ladder-admin-mysql
+    restart: always
+    networks:
+      - la-network
+    environment:
+      MYSQL_ROOT_PASSWORD: ladder-admin@2024
+      MYSQL_DATABASE: ladder-admin
+      MYSQL_USER: la-user
+      MYSQL_PASSWORD: ladder-admin@2024
+    volumes:
+      - ladder-admin-mysql-data:/var/lib/mysql
+    ports:
+      - "3306:3306"  # 将 MySQL 容器的 3306 端口映射到宿主机的 3306 端口
+
+  ladder-admin-redis:
+    image: redis:7
+    container_name: redis-container
+    restart: always
+    networks:
+      - la-network
+    volumes:
+      - ladder-admin-redis-data:/data
+    # ports:
+    #   - "6379:6379"  
+

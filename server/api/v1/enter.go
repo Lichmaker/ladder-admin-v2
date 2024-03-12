@@ -1,21 +1,23 @@
 package v1
 
 import (
-	"github.com/flipped-aurora/gin-vue-admin/server/api/v1/article"
-	"github.com/flipped-aurora/gin-vue-admin/server/api/v1/datastat"
+	"github.com/flipped-aurora/gin-vue-admin/server/api/v1/announcementModel"
+	"github.com/flipped-aurora/gin-vue-admin/server/api/v1/datastatisticsmodel"
 	"github.com/flipped-aurora/gin-vue-admin/server/api/v1/example"
-	"github.com/flipped-aurora/gin-vue-admin/server/api/v1/syscontrol"
 	"github.com/flipped-aurora/gin-vue-admin/server/api/v1/system"
-	"github.com/flipped-aurora/gin-vue-admin/server/api/v1/v2rayUser"
+	"github.com/flipped-aurora/gin-vue-admin/server/api/v1/userDataUsageModel"
+	"github.com/flipped-aurora/gin-vue-admin/server/api/v1/userext"
+	"github.com/flipped-aurora/gin-vue-admin/server/api/v1/v2raynode"
 )
 
 type ApiGroup struct {
-	SystemApiGroup    system.ApiGroup
-	ExampleApiGroup   example.ApiGroup
-	ArticleApiGroup   article.ApiGroup
-	DatastatApiGroup  datastat.ApiGroup
-	SysControlGroup   syscontrol.ApiGroup
-	V2rayuserApiGroup v2rayUser.ApiGroup
+	SystemApiGroup              system.ApiGroup
+	ExampleApiGroup             example.ApiGroup
+	DatastatisticsmodelApiGroup datastatisticsmodel.ApiGroup
+	UserextApiGroup             userext.ApiGroup
+	UserDataUsageModelApiGroup  userDataUsageModel.ApiGroup
+	AnnouncementModelApiGroup   announcementModel.ApiGroup
+	V2raynodeApiGroup           v2raynode.ApiGroup
 }
 
 var ApiGroupApp = new(ApiGroup)

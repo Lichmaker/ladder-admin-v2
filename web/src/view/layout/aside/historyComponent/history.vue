@@ -5,7 +5,7 @@
       :closable="!(historys.length === 1 && $route.name === defaultRouter)"
       type="card"
       @contextmenu.prevent="openContextMenu($event)"
-      @tab-change="changeTab"
+      @tab-click="changeTab"
       @tab-remove="removeTab"
     >
       <el-tab-pane
@@ -48,11 +48,6 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'HistoryComponent',
-}
-</script>
 
 <script setup>
 import { emitter } from '@/utils/bus.js'
@@ -60,6 +55,10 @@ import { computed, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/pinia/modules/user'
 import { fmtTitle } from '@/utils/fmtRouterTitle'
+
+defineOptions({
+  name: 'HistoryComponent',
+})
 
 const route = useRoute()
 const router = useRouter()
@@ -112,7 +111,7 @@ const openContextMenu = (e) => {
     }
     left.value = e.clientX - width
     top.value = e.clientY + 10
-    rightActive.value = id.split('-')[1]
+    rightActive.value = id.substring(4)
   }
 }
 const closeAll = () => {
@@ -209,14 +208,9 @@ const setTab = (route) => {
 
 const historyMap = ref({})
 
-watch(() => historys.value, () => {
-  historyMap.value = {}
-  historys.value.forEach((item) => {
-    historyMap.value[getFmtString(item)] = item
-  })
-})
-
-const changeTab = (name) => {
+const changeTab = (TabsPaneContext) => {
+  const name = TabsPaneContext?.props?.name
+  if (!name) return
   const tab = historyMap.value[name]
   router.push({
     name: tab.name,
@@ -274,6 +268,11 @@ watch(() => route, (to, now) => {
 
 watch(() => historys.value, () => {
   sessionStorage.setItem('historys', JSON.stringify(historys.value))
+  historyMap.value = {}
+  historys.value.forEach((item) => {
+    historyMap.value[getFmtString(item)] = item
+  })
+  emitter.emit('setKeepAlive', historys.value)
 }, {
   deep: true
 })
@@ -311,6 +310,10 @@ const initPage = () => {
     activeValue.value = window.sessionStorage.getItem('activeValue')
   }
   setTab(route)
+  if (window.sessionStorage.getItem('needCloseAll') === 'true') {
+    closeAll()
+    window.sessionStorage.removeItem('needCloseAll')
+  }
 }
 initPage()
 

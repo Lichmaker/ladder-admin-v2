@@ -1,0 +1,40 @@
+version: "3"
+
+# 需要提前创建network： docker network create la-network
+networks:
+  la-network:
+    external: true
+
+  
+services:
+  ladder-admin-web: 
+    image: lichmaker/ladder-admin-web:1.0
+    container_name: ladder-admin-web
+    restart: always
+    ports:
+      - '8080:8080'
+    depends_on:
+      - ladder-admin-server
+    command: [ 'nginx-debug', '-g', 'daemon off;' ]
+    networks:
+      - la-network
+
+  ladder-admin-server:
+    image: lichmaker/ladder-admin-server:1.0
+    container_name: ladder-admin-server
+    restart: always
+    depends_on:
+      - v2ray-manager-server
+    ports:
+      - '8888:8888'
+    networks:
+      - la-network
+
+  v2ray-manager-server:
+    image: lichmaker/v2ray-manager:1.0
+    container_name: v2ray-manager-server
+    restart: always
+    ports:
+      - '10088:10088'
+    networks:
+      - la-network

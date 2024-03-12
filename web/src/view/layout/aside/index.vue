@@ -31,12 +31,6 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'Aside',
-}
-</script>
-
 <script setup>
 import AsideComponent from '@/view/layout/aside/asideComponent/index.vue'
 import { emitter } from '@/utils/bus.js'
@@ -44,6 +38,10 @@ import { ref, watch, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/pinia/modules/user'
 import { useRouterStore } from '@/pinia/modules/router'
+
+defineOptions({
+  name: 'Aside',
+})
 
 const route = useRoute()
 const router = useRouter()
@@ -58,7 +56,7 @@ const getTheme = () => {
     case '#fff':
       theme.value = {
         background: '#fff',
-        activeBackground: '#4D70FF',
+        activeBackground: 'var(--el-color-primary)',
         activeText: '#fff',
         normalText: '#333',
         hoverBackground: 'rgba(64, 158, 255, 0.08)',
@@ -68,7 +66,7 @@ const getTheme = () => {
     case '#191a23':
       theme.value = {
         background: '#191a23',
-        activeBackground: '#4D70FF',
+        activeBackground: 'var(--el-color-primary)',
         activeText: '#fff',
         normalText: '#fff',
         hoverBackground: 'rgba(64, 158, 255, 0.08)',
@@ -82,7 +80,7 @@ getTheme()
 
 const active = ref('')
 watch(() => route, () => {
-  active.value = route.name
+  active.value = route.meta.activeName || route.name
 }, { deep: true })
 
 watch(() => userStore.sideMode, () => {
@@ -91,7 +89,7 @@ watch(() => userStore.sideMode, () => {
 
 const isCollapse = ref(false)
 const initPage = () => {
-  active.value = route.name
+  active.value = route.meta.activeName || route.name
   const screenWidth = document.body.clientWidth
   if (screenWidth < 1000) {
     isCollapse.value = !isCollapse.value
@@ -111,7 +109,7 @@ onUnmounted(() => {
 const selectMenuItem = (index, _, ele, aaa) => {
   const query = {}
   const params = {}
- routerStore.routeMap[index]?.parameters &&
+  routerStore.routeMap[index]?.parameters &&
     routerStore.routeMap[index]?.parameters.forEach((item) => {
       if (item.type === 'query') {
         query[item.key] = item.value
@@ -119,12 +117,12 @@ const selectMenuItem = (index, _, ele, aaa) => {
         params[item.key] = item.value
       }
     })
- if (index === route.name) return
- if (index.indexOf('http://') > -1 || index.indexOf('https://') > -1) {
-   window.open(index)
- } else {
-   router.push({ name: index, query, params })
- }
+  if (index === route.name) return
+  if (index.indexOf('http://') > -1 || index.indexOf('https://') > -1) {
+    window.open(index)
+  } else {
+    router.push({ name: index, query, params })
+  }
 }
 </script>
 

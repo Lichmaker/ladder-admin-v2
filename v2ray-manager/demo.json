@@ -1,0 +1,184 @@
+{
+    "inbounds": [
+        {
+            "port": 12315,
+            "listen": "127.0.0.1",
+            "protocol": "vmess",
+            "settings": {
+                "clients": [
+                    {
+                        "id": "41b8f634-5efc-ce05-ed70-203bd2cc005c",
+                        "alterId": 32,
+                        "email": "admin@ladder-admin.org",
+                        "level": 0
+                    },
+                    {
+                        "id": "17f1d575-ed52-e348-2e5d-e8cc240f8f66",
+                        "alterId": 32,
+                        "email": "911314703@qq.com",
+                        "level": 0
+                    },
+                    {
+                        "id": "060eb7fb-e672-a314-dccf-004e1cc7a7fe",
+                        "alterId": 32,
+                        "email": "540864979@qq.com",
+                        "level": 0
+                    },
+                    {
+                        "id": "00b6df68-1686-bcca-cd79-b4296dcbaf25",
+                        "alterId": 32,
+                        "email": "472587431@qq.com",
+                        "level": 0
+                    },
+                    {
+                        "id": "9f3844b5-f4a8-e4d0-9290-a964944734ec",
+                        "alterId": 32,
+                        "email": "xian-jun.feng@connect.polyu.hk",
+                        "level": 0
+                    },
+                    {
+                        "id": "c066595d-0f28-6782-e237-e36c7ed0890c",
+                        "alterId": 32,
+                        "email": "237899182@qq.com",
+                        "level": 0
+                    },
+                    {
+                        "id": "dc9d67ca-814c-9c01-635b-440a7fad3a38",
+                        "alterId": 32,
+                        "email": "circus_clown7@qq.com",
+                        "level": 0
+                    },
+                    {
+                        "id": "8cfeb10c-44c8-4625-fb06-4f9a7d950635",
+                        "alterId": 32,
+                        "email": "739647904@qq.com",
+                        "level": 0
+                    },
+                    {
+                        "id": "731bcb02-e731-9766-649a-9ec6ca529b21",
+                        "alterId": 32,
+                        "email": "345252051@qq.com",
+                        "level": 0
+                    },
+                    {
+                        "id": "8cf1e696-fe82-d54d-8384-d2deccd28683",
+                        "alterId": 32,
+                        "email": "r739647353@163.com",
+                        "level": 0
+                    },
+                    {
+                        "id": "e472f96b-bfbf-c710-ff3e-f444ba7dc5b4",
+                        "alterId": 32,
+                        "email": "hurraychan@163.com",
+                        "level": 0
+                    },
+                    {
+                        "id": "1a88f0e6-b37c-029e-4475-9db5f0b37120",
+                        "alterId": 32,
+                        "email": "3208374980@qq.com",
+                        "level": 0
+                    },
+                    {
+                        "id": "3cc744f5-ed55-9ebf-c10b-5b09ed45ba46",
+                        "alterId": 32,
+                        "email": "406317318@qq.com",
+                        "level": 0
+                    },
+                    {
+                        "id": "586b9d39-1a9f-e1e6-9010-5237e4f5ca59",
+                        "alterId": 32,
+                        "email": "625858542@qq.com",
+                        "level": 0
+                    },
+                    {
+                        "id": "09fc0543-a514-2c2f-bf33-2ff7a5593216",
+                        "alterId": 32,
+                        "email": "zehuiliangp@outlook.com",
+                        "level": 0
+                    },
+                    {
+                        "id": "e316d6ba-af45-eb64-3890-95e81e838389",
+                        "alterId": 32,
+                        "email": "dinglee1314@qq.com",
+                        "level": 0
+                    },
+                    {
+                        "id": "4e7a8209-a7bb-14bb-ae08-010c4cf22a46",
+                        "alterId": 32,
+                        "email": "tiyan@wuguozhang.com",
+                        "level": 0
+                    },
+                    {
+                        "id": "158e79b9-262e-ed92-53ba-da806bbf5ec5",
+                        "alterId": 32,
+                        "email": "13411980447@163.com",
+                        "level": 0
+                    },
+                    {
+                        "id": "3118ed74-5fff-c9dd-8f04-3bb6f8c868fb",
+                        "alterId": 32,
+                        "email": "blueblueblueguo@163.com",
+                        "level": 0
+                    }
+                ]
+            },
+            "streamSettings": {
+                "network": "ws",
+                "wsSettings": {
+                    "path": "\/mengniusuansuanru"
+                }
+            }
+        },
+        {
+            "listen": "127.0.0.1",
+            "port": 10010,
+            "protocol": "dokodemo-door",
+            "settings": {
+                "address": "127.0.0.1",
+                "port": 10011
+            },
+            "tag": "api"
+        }
+    ],
+    "outbounds": [
+        {
+            "protocol": "freedom",
+            "settings": {}
+        }
+    ],
+    "log": {
+        "access": "\/var\/log\/v2ray\/access.log",
+        "error": "\/var\/log\/v2ray\/error.log",
+        "loglevel": "warning"
+    },
+    "policy": {
+        "levels": {
+            "0": {
+                "statsUserUplink": true,
+                "statsUserDownlink": true
+            }
+        },
+        "system": {
+            "statsInboundUplink": true,
+            "statsInboundDownlink": true
+        }
+    },
+    "stats": {},
+    "routing": {
+        "rules": [
+            {
+                "type": "field",
+                "inboundTag": [
+                    "api"
+                ],
+                "outboundTag": "api"
+            }
+        ]
+    },
+    "api": {
+        "tag": "api",
+        "services": [
+            "StatsService"
+        ]
+    }
+}

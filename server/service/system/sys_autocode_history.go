@@ -4,7 +4,9 @@ import (
 	"errors"
 	"fmt"
 	systemReq "github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
+	"github.com/flipped-aurora/gin-vue-admin/server/utils/ast"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -28,7 +30,7 @@ var AutoCodeHistoryServiceApp = new(AutoCodeHistoryService)
 // RouterPath : RouterPath@RouterString;RouterPath2@RouterString2
 // Author [SliverHorn](https://github.com/SliverHorn)
 // Author [songzhibin97](https://github.com/songzhibin97)
-func (autoCodeHistoryService *AutoCodeHistoryService) CreateAutoCodeHistory(meta, structName, structCNName, autoCodePath string, injectionMeta string, tableName string, apiIds string, Package string) error {
+func (autoCodeHistoryService *AutoCodeHistoryService) CreateAutoCodeHistory(meta, structName, structCNName, autoCodePath string, injectionMeta string, tableName string, apiIds string, Package string, BusinessDB string) error {
 	return global.GVA_DB.Create(&system.SysAutoCodeHistory{
 		Package:       Package,
 		RequestMeta:   meta,
@@ -38,6 +40,7 @@ func (autoCodeHistoryService *AutoCodeHistoryService) CreateAutoCodeHistory(meta
 		StructCNName:  structCNName,
 		TableName:     tableName,
 		ApiIDs:        apiIds,
+		BusinessDB:    BusinessDB,
 	}).Error
 }
 
@@ -52,9 +55,9 @@ func (autoCodeHistoryService *AutoCodeHistoryService) First(info *request.GetByI
 // Repeat 检测重复
 // Author [SliverHorn](https://github.com/SliverHorn)
 // Author [songzhibin97](https://github.com/songzhibin97)
-func (autoCodeHistoryService *AutoCodeHistoryService) Repeat(structName string, Package string) bool {
+func (autoCodeHistoryService *AutoCodeHistoryService) Repeat(businessDB, structName, Package string) bool {
 	var count int64
-	global.GVA_DB.Model(&system.SysAutoCodeHistory{}).Where("struct_name = ? and package = ? and flag = 0", structName, Package).Count(&count)
+	global.GVA_DB.Model(&system.SysAutoCodeHistory{}).Where("business_db = ? and struct_name = ? and package = ? and flag = 0", businessDB, structName, Package).Count(&count)
 	return count > 0
 }
 
@@ -67,13 +70,23 @@ func (autoCodeHistoryService *AutoCodeHistoryService) RollBack(info *systemReq.R
 		return err
 	}
 	// 清除API表
-	err := ApiServiceApp.DeleteApiByIds(strings.Split(md.ApiIDs, ";"))
+
+	ids := request.IdsReq{}
+	idsStr := strings.Split(md.ApiIDs, ";")
+	for i := range idsStr[0 : len(idsStr)-1] {
+		id, err := strconv.Atoi(idsStr[i])
+		if err != nil {
+			return err
+		}
+		ids.Ids = append(ids.Ids, id)
+	}
+	err := ApiServiceApp.DeleteApisByIds(ids)
 	if err != nil {
 		global.GVA_LOG.Error("ClearTag DeleteApiByIds:", zap.Error(err))
 	}
 	// 删除表
 	if info.DeleteTable {
-		if err = AutoCodeServiceApp.DropTable(md.TableName); err != nil {
+		if err = AutoCodeServiceApp.DropTable(md.BusinessDB, md.TableName); err != nil {
 			global.GVA_LOG.Error("ClearTag DropTable:", zap.Error(err))
 		}
 	}
@@ -109,6 +122,9 @@ func (autoCodeHistoryService *AutoCodeHistoryService) RollBack(info *systemReq.R
 			_ = utils.AutoClearCode(meta[0], meta[2])
 		}
 	}
+
+	ast.RollBackAst(md.Package, md.StructName)
+
 	md.Flag = 1
 	return global.GVA_DB.Save(&md).Error
 }

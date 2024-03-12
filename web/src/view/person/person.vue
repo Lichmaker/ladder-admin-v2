@@ -1,68 +1,73 @@
 <template>
   <div>
-    <el-row>
-      <el-col :span="6">
-        <div class="fl-left avatar-box">
-          <div class="user-card">
-            <div
-              class="user-headpic-update"
-              :style="{
-                'background-image': `url(${
-                  userStore.userInfo.headerImg &&
-                  userStore.userInfo.headerImg.slice(0, 4) !== 'http'
-                    ? path + userStore.userInfo.headerImg
-                    : userStore.userInfo.headerImg
-                })`,
-                'background-repeat': 'no-repeat',
-                'background-size': 'cover',
-              }"
-            >
-              <span class="update" @click="openChooseImg">
-                <el-icon>
-                  <edit />
-                </el-icon>
-                重新上传</span>
+    <div class="grid grid-cols-12 w-full gap-2">
+      <div class="col-span-3 h-full">
+        <div class="w-full h-full bg-white px-4 py-8 rounded-lg shadow-lg box-border">
+          <div class="user-card px-6 text-center bg-white shrink-0">
+            <div class="flex justify-center">
+              <SelectImage
+                v-model="userStore.userInfo.headerImg"
+                file-type="image"
+              />
             </div>
-            <div class="user-personality">
-              <p v-if="!editFlag" class="nickName">
+            <div class="py-6 text-center">
+              <p
+                v-if="!editFlag"
+                class="text-3xl flex justify-center items-center gap-4"
+              >
                 {{ userStore.userInfo.nickName }}
-                <el-icon class="pointer" color="#66b1ff" @click="openEdit">
+                <el-icon
+                  class="cursor-pointer text-sm"
+                  color="#66b1ff"
+                  @click="openEdit"
+                >
                   <edit />
                 </el-icon>
               </p>
-              <p v-if="editFlag" class="nickName">
+              <p
+                v-if="editFlag"
+                class="flex justify-center items-center gap-4"
+              >
                 <el-input v-model="nickName" />
-                <el-icon class="pointer" color="#67c23a" @click="enterEdit">
+                <el-icon
+                  class="cursor-pointer"
+                  color="#67c23a"
+                  @click="enterEdit"
+                >
                   <check />
                 </el-icon>
-                <el-icon class="pointer" color="#f23c3c" @click="closeEdit">
+                <el-icon
+                  class="cursor-pointer"
+                  color="#f23c3c"
+                  @click="closeEdit"
+                >
                   <close />
                 </el-icon>
               </p>
-              <p class="person-info">这个家伙很懒，什么都没有留下</p>
+              <!-- <p class="text-gray-500 mt-2 text-md">这个家伙很懒，什么都没有留下</p> -->
             </div>
-            <div class="user-information">
-              <ul>
-                <li>
+            <div class="w-full h-full text-left">
+              <ul class="inline-block h-full w-full">
+                <li class="info-list">
                   <el-icon>
                     <user />
                   </el-icon>
                   {{ userStore.userInfo.nickName }}
                 </li>
-                <el-tooltip
+                <!-- <el-tooltip
                   class="item"
                   effect="light"
                   content="北京反转极光科技有限公司-技术部-前端事业群"
                   placement="top"
                 >
-                  <li>
+                  <li class="info-list">
                     <el-icon>
                       <data-analysis />
                     </el-icon>
                     北京反转极光科技有限公司-技术部-前端事业群
                   </li>
                 </el-tooltip>
-                <li>
+                <li class="info-list">
                   <el-icon>
                     <video-camera />
                   </el-icon>
@@ -74,50 +79,69 @@
                   content="GoLang/JavaScript/Vue/Gorm"
                   placement="top"
                 >
-                  <li>
+                  <li class="info-list">
                     <el-icon>
                       <medal />
                     </el-icon>
                     GoLang/JavaScript/Vue/Gorm
                   </li>
-                </el-tooltip>
+                </el-tooltip> -->
               </ul>
             </div>
           </div>
         </div>
-      </el-col>
-      <el-col :span="18">
-        <div class="user-addcount">
-          <el-tabs v-model="activeName" @tab-click="handleClick">
-            <el-tab-pane label="账号绑定" name="second">
+      </div>
+      <div class="col-span-9 ">
+        <div class="bg-white h-full px-4 py-8 rounded-lg shadow-lg box-border">
+          <el-tabs
+            v-model="activeName"
+            @tab-click="handleClick"
+          >
+            <el-tab-pane
+              label="账号绑定"
+              name="second"
+            >
               <ul>
-                <li>
-                  <p class="title">密保手机</p>
-                  <p class="desc">
+                <li class="borderd">
+                  <p class="pb-2.5 text-xl text-gray-600">手机</p>
+                  <p class="pb-2.5 text-lg text-gray-400">
                     已绑定手机:{{ userStore.userInfo.phone }}
-                    <a href="javascript:void(0)" @click="changePhoneFlag = true">立即修改</a>
+                    <!-- <a
+                      href="javascript:void(0)"
+                      class="float-right text-blue-400"
+                      @click="changePhoneFlag = true"
+                    >立即修改</a> -->
                   </p>
                 </li>
-                <li>
-                  <p class="title">密保邮箱</p>
-                  <p class="desc">
+                <li class="borderd pt-2.5">
+                  <p class="pb-2.5 text-xl text-gray-600">邮箱</p>
+                  <p class="pb-2.5 text-lg text-gray-400">
                     已绑定邮箱：{{ userStore.userInfo.email }}
-                    <a href="javascript:void(0)" @click="changeEmailFlag = true">立即修改</a>
+                    <!-- <a
+                      href="javascript:void(0)"
+                      class="float-right text-blue-400"
+                      disable
+                      @click="changeEmailFlag = true"
+                    >立即修改</a> -->
                   </p>
                 </li>
-                <li>
-                  <p class="title">密保问题</p>
-                  <p class="desc">
+                <!-- <li class="borderd pt-2.5">
+                  <p class="pb-2.5 text-xl text-gray-600">密保问题</p>
+                  <p class="pb-2.5 text-lg text-gray-400">
                     未设置密保问题
-                    <a href="javascript:void(0)">去设置</a>
+                    <a
+                      href="javascript:void(0)"
+                      class="float-right text-blue-400"
+                    >去设置</a>
                   </p>
-                </li>
-                <li>
-                  <p class="title">修改密码</p>
-                  <p class="desc">
+                </li> -->
+                <li class="borderd pt-2.5">
+                  <p class="pb-2.5 text-xl text-gray-600">修改密码</p>
+                  <p class="pb-2.5 text-lg text-gray-400">
                     修改个人密码
                     <a
                       href="javascript:void(0)"
+                      class="float-right text-blue-400"
                       @click="showPassword = true"
                     >修改密码</a>
                   </p>
@@ -126,10 +150,8 @@
             </el-tab-pane>
           </el-tabs>
         </div>
-      </el-col>
-    </el-row>
-
-    <ChooseImg ref="chooseImgRef" @enter-img="enterImg" />
+      </div>
+    </div>
 
     <el-dialog
       v-model="showPassword"
@@ -143,24 +165,45 @@
         :rules="rules"
         label-width="80px"
       >
-        <el-form-item :minlength="6" label="原密码" prop="password">
-          <el-input v-model="pwdModify.password" show-password />
+        <el-form-item
+          :minlength="6"
+          label="原密码"
+          prop="password"
+        >
+          <el-input
+            v-model="pwdModify.password"
+            show-password
+          />
         </el-form-item>
-        <el-form-item :minlength="6" label="新密码" prop="newPassword">
-          <el-input v-model="pwdModify.newPassword" show-password />
+        <el-form-item
+          :minlength="6"
+          label="新密码"
+          prop="newPassword"
+        >
+          <el-input
+            v-model="pwdModify.newPassword"
+            show-password
+          />
         </el-form-item>
-        <el-form-item :minlength="6" label="确认密码" prop="confirmPassword">
-          <el-input v-model="pwdModify.confirmPassword" show-password />
+        <el-form-item
+          :minlength="6"
+          label="确认密码"
+          prop="confirmPassword"
+        >
+          <el-input
+            v-model="pwdModify.confirmPassword"
+            show-password
+          />
         </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
           <el-button
-            size="small"
+
             @click="showPassword = false"
           >取 消</el-button>
           <el-button
-            size="small"
+
             type="primary"
             @click="savePassword"
           >确 定</el-button>
@@ -168,54 +211,102 @@
       </template>
     </el-dialog>
 
-    <el-dialog v-model="changePhoneFlag" title="绑定手机" width="600px">
+    <el-dialog
+      v-model="changePhoneFlag"
+      title="绑定手机"
+      width="600px"
+    >
       <el-form :model="phoneForm">
-        <el-form-item label="手机号" label-width="120px">
-          <el-input v-model="phoneForm.phone" placeholder="请输入手机号" autocomplete="off" />
+        <el-form-item
+          label="手机号"
+          label-width="120px"
+        >
+          <el-input
+            v-model="phoneForm.phone"
+            placeholder="请输入手机号"
+            autocomplete="off"
+          />
         </el-form-item>
-        <el-form-item label="验证码" label-width="120px">
-          <div class="code-box">
-            <el-input v-model="phoneForm.code" autocomplete="off" placeholder="请自行设计短信服务，此处为模拟随便写" style="width:300px" />
-            <el-button size="small" type="primary" :disabled="time>0" @click="getCode">{{ time>0?`(${time}s)后重新获取`:'获取验证码' }}</el-button>
+        <el-form-item
+          label="验证码"
+          label-width="120px"
+        >
+          <div class="flex w-full gap-4">
+            <el-input
+              v-model="phoneForm.code"
+              class="flex-1"
+              autocomplete="off"
+              placeholder="请自行设计短信服务，此处为模拟随便写"
+              style="width:300px"
+            />
+            <el-button
+              type="primary"
+              :disabled="time>0"
+              @click="getCode"
+            >{{ time>0?`(${time}s)后重新获取`:'获取验证码' }}</el-button>
           </div>
         </el-form-item>
       </el-form>
       <template #footer>
         <span class="dialog-footer">
           <el-button
-            size="small"
+
             @click="closeChangePhone"
           >取消</el-button>
           <el-button
             type="primary"
-            size="small"
+
             @click="changePhone"
           >更改</el-button>
         </span>
       </template>
     </el-dialog>
 
-    <el-dialog v-model="changeEmailFlag" title="绑定邮箱" width="600px">
+    <el-dialog
+      v-model="changeEmailFlag"
+      title="绑定邮箱"
+      width="600px"
+    >
       <el-form :model="emailForm">
-        <el-form-item label="邮箱" label-width="120px">
-          <el-input v-model="emailForm.email" placeholder="请输入邮箱" autocomplete="off" />
+        <el-form-item
+          label="邮箱"
+          label-width="120px"
+        >
+          <el-input
+            v-model="emailForm.email"
+            placeholder="请输入邮箱"
+            autocomplete="off"
+          />
         </el-form-item>
-        <el-form-item label="验证码" label-width="120px">
-          <div class="code-box">
-            <el-input v-model="emailForm.code" placeholder="请自行设计邮件服务，此处为模拟随便写" autocomplete="off" style="width:300px" />
-            <el-button size="small" type="primary" :disabled="emailTime>0" @click="getEmailCode">{{ emailTime>0?`(${emailTime}s)后重新获取`:'获取验证码' }}</el-button>
+        <el-form-item
+          label="验证码"
+          label-width="120px"
+        >
+          <div class="flex w-full gap-4">
+            <el-input
+              v-model="emailForm.code"
+              class="flex-1"
+              placeholder="请自行设计邮件服务，此处为模拟随便写"
+              autocomplete="off"
+              style="width:300px"
+            />
+            <el-button
+              type="primary"
+              :disabled="emailTime>0"
+              @click="getEmailCode"
+            >{{ emailTime>0?`(${emailTime}s)后重新获取`:'获取验证码' }}</el-button>
           </div>
         </el-form-item>
       </el-form>
       <template #footer>
         <span class="dialog-footer">
           <el-button
-            size="small"
+
             @click="closeChangeEmail"
           >取消</el-button>
           <el-button
             type="primary"
-            size="small"
+
             @click="changeEmail"
           >更改</el-button>
         </span>
@@ -224,20 +315,17 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'Person',
-}
-</script>
-
 <script setup>
-import ChooseImg from '@/components/chooseImg/index.vue'
 import { setSelfInfo, changePassword } from '@/api/user.js'
-import { reactive, ref } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/pinia/modules/user'
+import SelectImage from '@/components/selectImage/selectImage.vue'
 
-const path = ref(import.meta.env.VITE_BASE_API + '/')
+defineOptions({
+  name: 'Person',
+})
+
 const activeName = ref('second')
 const rules = reactive({
   password: [
@@ -297,21 +385,16 @@ const clearPassword = () => {
   modifyPwdForm.value.clearValidate()
 }
 
-const chooseImgRef = ref(null)
-const openChooseImg = () => {
-  chooseImgRef.value.open()
-}
-
-const enterImg = async(url) => {
-  const res = await setSelfInfo({ headerImg: url })
+watch(() => userStore.userInfo.headerImg, async(val) => {
+  const res = await setSelfInfo({ headerImg: val })
   if (res.code === 0) {
-    userStore.ResetUserInfo({ headerImg: url })
+    userStore.ResetUserInfo({ headerImg: val })
     ElMessage({
       type: 'success',
       message: '设置成功',
     })
   }
-}
+})
 
 const openEdit = () => {
   nickName.value = userStore.userInfo.nickName
@@ -411,142 +494,15 @@ const changeEmail = async() => {
 </script>
 
 <style lang="scss">
-.avatar-uploader .el-upload {
-  border: 1px dashed #d9d9d9;
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
-.avatar-uploader .el-upload:hover {
-  border-color: #409eff;
-}
-.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 178px;
-  height: 178px;
-  line-height: 178px;
-  text-align: center;
-}
-.avatar {
-  width: 178px;
-  height: 178px;
-  display: block;
-}
-.avatar-box {
-  box-shadow: -2px 0 20px -16px;
-  width: 80%;
-  height: 100%;
-  .user-card {
-    min-height: calc(90vh - 200px);
-    padding: 30px 20px;
-    text-align: center;
-    .el-avatar {
-      border-radius: 50%;
+.borderd {
+  @apply border-b-2 border-solid border-gray-100 border-t-0 border-r-0 border-l-0;
+    &:last-child{
+      @apply border-b-0;
     }
-    .user-personality {
-      padding: 24px 0;
-      text-align: center;
-      p {
-        font-size: 16px;
-      }
-      .nickName {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 26px;
-      }
-      .person-info {
-        margin-top: 6px;
-        font-size: 14px;
-        color: #999;
-      }
-    }
-    .user-information {
-      width: 100%;
-      height: 100%;
-      text-align: left;
-      ul {
-        display: inline-block;
-        height: 100%;
-        width: 100%;
-        li {
-          width: 100%;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          i {
-            margin-right: 8px;
-          }
-          padding: 20px 0;
-          font-size: 16px;
-          font-weight: 400;
-          color: #606266;
-        }
-      }
-    }
-  }
+ }
+
+.info-list{
+  @apply w-full whitespace-nowrap overflow-hidden text-ellipsis py-3 text-lg text-gray-700
 }
-.user-addcount {
-  ul {
-    li {
-      .title {
-        padding: 10px;
-        font-size: 18px;
-        color: #696969;
-      }
-      .desc {
-        font-size: 16px;
-        padding: 0 10px 20px 10px;
-        color: #a9a9a9;
-        a {
-          color: rgb(64, 158, 255);
-          float: right;
-        }
-      }
-      border-bottom: 2px solid #f0f2f5;
-    }
-  }
-}
-.user-headpic-update {
-  width: 120px;
-  height: 120px;
-  line-height: 120px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: center;
-  border-radius: 20px;
-  &:hover {
-    color: #fff;
-    background: linear-gradient(
-        to bottom,
-        rgba(255, 255, 255, 0.15) 0%,
-        rgba(0, 0, 0, 0.15) 100%
-      ),
-      radial-gradient(
-          at top center,
-          rgba(255, 255, 255, 0.4) 0%,
-          rgba(0, 0, 0, 0.4) 120%
-        )
-        #989898;
-    background-blend-mode: multiply, multiply;
-    .update {
-      color: #fff;
-    }
-  }
-  .update {
-    height: 120px;
-    width: 120px;
-    text-align: center;
-    color: transparent;
-  }
-}
-.pointer {
-  cursor: pointer;
-}
-.code-box{
-  display: flex;
-  justify-content: space-between;
-}
+
 </style>

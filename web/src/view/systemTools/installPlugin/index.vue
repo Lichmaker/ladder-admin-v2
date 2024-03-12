@@ -1,10 +1,8 @@
 <template>
   <div>
     <el-upload
-      class="upload-demo"
       drag
       :action="`${path}/autoCode/installPlugin`"
-      :headers="{'x-token':userStore.token}"
       :show-file-list="false"
       :on-success="handleSuccess"
       :on-error="handleSuccess"

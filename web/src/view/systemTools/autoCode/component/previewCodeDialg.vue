@@ -1,17 +1,23 @@
 <template>
-  <div class="previewCode">
-    <el-tabs v-model="activeName">
-      <el-tab-pane v-for="(item, key) in previewCode" :key="key" :label="key" :name="key">
-        <div :id="key" class="tab-info" />
-      </el-tab-pane>
-    </el-tabs>
-  </div>
+  <el-tabs v-model="activeName">
+    <el-tab-pane
+      v-for="(item, key) in previewCode"
+      :key="key"
+      :label="key"
+      :name="key"
+    >
+      <div
+        :id="key"
+        class="h-[50vh] bg-white px-5 overflow-y-scroll"
+      />
+    </el-tab-pane>
+  </el-tabs>
 </template>
 
 <script setup>
-import marked from 'marked'
+import { marked } from 'marked'
 import hljs from 'highlight.js'
-import 'highlight.js/styles/atelier-plateau-light.css'
+import 'highlight.js/styles/atom-one-dark.css'
 import { ElMessage } from 'element-plus'
 import { onMounted, ref } from 'vue'
 
@@ -38,7 +44,8 @@ onMounted(() => {
     sanitize: false,
     smartLists: true,
     smartypants: false,
-    xhtml: false
+    xhtml: false,
+    langPrefix: 'hljs language-'
   })
   for (const key in props.previewCode) {
     if (activeName.value === '') {
@@ -73,21 +80,3 @@ const copy = () => {
 defineExpose({ copy })
 
 </script>
-
-<script>
-
-export default {
-
-}
-</script>
-
-<style lang="scss">
-.previewCode {
-  .tab-info {
-    height: 50vh;
-    background: #fff;
-    padding: 0 20px;
-    overflow-y: scroll;
-  }
-}
-</style>

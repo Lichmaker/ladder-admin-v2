@@ -3,7 +3,6 @@ package system
 import (
 	"errors"
 	"fmt"
-
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
@@ -45,6 +44,9 @@ func (apiService *ApiService) DeleteApi(api system.SysApi) (err error) {
 		return err
 	}
 	CasbinServiceApp.ClearCasbin(1, entity.Path, entity.Method)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -98,7 +100,7 @@ func (apiService *ApiService) GetAPIInfoList(api system.SysApi, info request.Pag
 				} else {
 					OrderStr = order
 				}
-			} else { // didn't matched any order key in `orderMap`
+			} else { // didn't match any order key in `orderMap`
 				err = fmt.Errorf("非法的排序字段: %v", order)
 				return apiList, total, err
 			}
@@ -166,10 +168,17 @@ func (apiService *ApiService) UpdateApi(api system.SysApi) (err error) {
 //@return: err error
 
 func (apiService *ApiService) DeleteApisByIds(ids request.IdsReq) (err error) {
-	err = global.GVA_DB.Delete(&[]system.SysApi{}, "id in ?", ids.Ids).Error
+	var apis []system.SysApi
+	err = global.GVA_DB.Find(&apis, "id in ?", ids.Ids).Delete(&apis).Error
+	if err != nil {
+		return err
+	} else {
+		for _, sysApi := range apis {
+			CasbinServiceApp.ClearCasbin(1, sysApi.Path, sysApi.Method)
+		}
+		if err != nil {
+			return err
+		}
+	}
 	return err
-}
-
-func (apiService *ApiService) DeleteApiByIds(ids []string) (err error) {
-	return global.GVA_DB.Delete(&system.SysApi{}, "id in ?", ids).Error
 }

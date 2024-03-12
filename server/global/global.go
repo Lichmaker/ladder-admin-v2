@@ -3,6 +3,10 @@ package global
 import (
 	"sync"
 
+	"github.com/qiniu/qmgo"
+	"google.golang.org/grpc"
+
+	"github.com/flipped-aurora/gin-vue-admin/server/protobuf/manager"
 	"github.com/flipped-aurora/gin-vue-admin/server/utils/timer"
 	"github.com/songzhibin97/gkit/cache/local_cache"
 
@@ -12,7 +16,7 @@ import (
 
 	"github.com/flipped-aurora/gin-vue-admin/server/config"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
 )
@@ -21,6 +25,7 @@ var (
 	GVA_DB     *gorm.DB
 	GVA_DBList map[string]*gorm.DB
 	GVA_REDIS  *redis.Client
+	GVA_MONGO  *qmgo.QmgoClient
 	GVA_CONFIG config.Server
 	GVA_VP     *viper.Viper
 	// GVA_LOG    *oplogging.Logger
@@ -30,6 +35,9 @@ var (
 
 	BlackCache local_cache.Cache
 	lock       sync.RWMutex
+
+	V2RAY_MANAGER_CONN   *grpc.ClientConn
+	V2RAY_MANAGER_CLIENT manager.ServeServiceClient
 )
 
 // GetGlobalDBByDBName 通过名称获取db list中的db

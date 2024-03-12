@@ -3,158 +3,86 @@
     <warning-bar
       title="获取字典且缓存方法已在前端utils/dictionary 已经封装完成 不必自己书写 使用方法查看文件内注释"
     />
-    <div class="gva-search-box">
-      <el-form :inline="true" :model="searchInfo">
-        <el-form-item label="字典名（中）">
-          <el-input v-model="searchInfo.name" placeholder="搜索条件" />
-        </el-form-item>
-        <el-form-item label="字典名（英）">
-          <el-input v-model="searchInfo.type" placeholder="搜索条件" />
-        </el-form-item>
-        <el-form-item label="状态" prop="status">
-          <el-select v-model="searchInfo.status" clear placeholder="请选择">
-            <el-option key="true" label="是" value="true" />
-            <el-option key="false" label="否" value="false" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="描述">
-          <el-input v-model="searchInfo.desc" placeholder="搜索条件" />
-        </el-form-item>
-        <el-form-item>
+    <div class="dict-box flex gap-4">
+      <div class="w-64 bg-white p-4">
+        <div class="flex justify-between items-center">
+          <span class="text font-bold">字典列表</span>
           <el-button
-            size="small"
             type="primary"
-            icon="search"
-            @click="onSubmit"
-          >查询</el-button>
-          <el-button
-            size="small"
-            icon="refresh"
-            @click="onReset"
-          >重置</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
-    <div class="gva-table-box">
-      <div class="gva-btn-list">
-        <el-button
-          size="small"
-          type="primary"
-          icon="plus"
-          @click="openDialog"
-        >新增</el-button>
+            @click="openDialog"
+          >
+            新增
+          </el-button>
+        </div>
+        <el-scrollbar
+          class="mt-4"
+          style="height: calc(100vh - 300px)"
+        >
+          <div
+            v-for="dictionary in dictionaryData"
+            :key="dictionary.ID"
+            class="rounded flex justify-between items-center px-2 py-4 cursor-pointer mt-2 hover:bg-blue-50 hover:text-gray-800 group bg-gray-50"
+            :class="selectID === dictionary.ID && 'active'"
+            @click="toDetail(dictionary)"
+          >
+            <span class="max-w-[160px] truncate">{{ dictionary.name }}</span>
+            <div>
+              <el-icon
+                class="group-hover:text-blue-500"
+                :class="selectID === dictionary.ID ? 'text-white-800':'text-blue-500'"
+                @click.stop="updateSysDictionaryFunc(dictionary)"
+              >
+                <Edit />
+              </el-icon>
+              <el-popover
+                v-model:visible="dictionary.visible"
+                placement="top"
+                width="160"
+              >
+                <p>确定要删除吗？</p>
+                <div style="text-align: right; margin-top: 8px;">
+                  <el-button
+                    type="primary"
+                    link
+                    @click="dictionary.visible = false"
+                  >取消</el-button>
+                  <el-button
+                    type="primary"
+                    @click="deleteSysDictionaryFunc(dictionary)"
+                  >确定</el-button>
+                </div>
+                <template #reference>
+                  <el-icon
+                    class="ml-2 group-hover:text-red-500"
+                    :class="selectID === dictionary.ID ? 'text-white-800':'text-red-500'"
+                  >
+                    <Delete />
+                  </el-icon>
+                </template>
+              </el-popover>
+            </div>
+          </div>
+        </el-scrollbar>
       </div>
-      <el-table
-        ref="multipleTable"
-        :data="tableData"
-        style="width: 100%"
-        tooltip-effect="dark"
-        row-key="ID"
-      >
-        <el-table-column type="selection" width="55" />
-        <el-table-column align="left" label="日期" width="180">
-          <template #default="scope">{{
-            formatDate(scope.row.CreatedAt)
-          }}</template>
-        </el-table-column>
-
-        <el-table-column
-          align="left"
-          label="字典名（中）"
-          prop="name"
-          width="160"
-        />
-
-        <el-table-column
-          align="left"
-          label="字典名（英）"
-          prop="type"
-          width="120"
-        />
-
-        <el-table-column align="left" label="状态" prop="status" width="120">
-          <template #default="scope">{{
-            formatBoolean(scope.row.status)
-          }}</template>
-        </el-table-column>
-
-        <el-table-column align="left" label="描述" prop="desc" width="280" />
-
-        <el-table-column align="left" label="按钮组">
-          <template #default="scope">
-            <el-button
-              size="small"
-              icon="document"
-              type="primary"
-              link
-              @click="toDetail(scope.row)"
-            >详情</el-button>
-            <el-button
-              size="small"
-              icon="edit"
-              type="primary"
-              link
-              @click="updateSysDictionaryFunc(scope.row)"
-            >变更</el-button>
-            <el-popover
-              v-model="scope.row.visible"
-              placement="top"
-              width="160"
-            >
-              <p>确定要删除吗？</p>
-              <div style="text-align: right; margin-top: 8px">
-                <el-button
-                  size="small"
-                  type="primary"
-                  link
-                  @click="scope.row.visible = false"
-                >取消</el-button>
-                <el-button
-                  type="primary"
-                  size="small"
-                  @click="deleteSysDictionaryFunc(scope.row)"
-                >确定</el-button>
-              </div>
-              <template #reference>
-                <el-button
-                  type="primary"
-                  link
-                  icon="delete"
-                  size="small"
-                  style="margin-left: 10px"
-                  @click="scope.row.visible = true"
-                >删除</el-button>
-              </template>
-            </el-popover>
-          </template>
-        </el-table-column>
-      </el-table>
-
-      <div class="gva-pagination">
-        <el-pagination
-          :current-page="page"
-          :page-size="pageSize"
-          :page-sizes="[10, 30, 50, 100]"
-          :total="total"
-          layout="total, sizes, prev, pager, next, jumper"
-          @current-change="handleCurrentChange"
-          @size-change="handleSizeChange"
-        />
+      <div class="flex-1 bg-white">
+        <sysDictionaryDetail :sys-dictionary-i-d="selectID" />
       </div>
     </div>
     <el-dialog
       v-model="dialogFormVisible"
       :before-close="closeDialog"
-      title="弹窗操作"
+      :title="type==='create'?'添加字典':'修改字典'"
     >
       <el-form
         ref="dialogForm"
         :model="formData"
         :rules="rules"
-        size="medium"
         label-width="110px"
       >
-        <el-form-item label="字典名（中）" prop="name">
+        <el-form-item
+          label="字典名（中）"
+          prop="name"
+        >
           <el-input
             v-model="formData.name"
             placeholder="请输入字典名（中）"
@@ -162,7 +90,10 @@
             :style="{ width: '100%' }"
           />
         </el-form-item>
-        <el-form-item label="字典名（英）" prop="type">
+        <el-form-item
+          label="字典名（英）"
+          prop="type"
+        >
           <el-input
             v-model="formData.type"
             placeholder="请输入字典名（英）"
@@ -170,14 +101,21 @@
             :style="{ width: '100%' }"
           />
         </el-form-item>
-        <el-form-item label="状态" prop="status" required>
+        <el-form-item
+          label="状态"
+          prop="status"
+          required
+        >
           <el-switch
             v-model="formData.status"
             active-text="开启"
             inactive-text="停用"
           />
         </el-form-item>
-        <el-form-item label="描述" prop="desc">
+        <el-form-item
+          label="描述"
+          prop="desc"
+        >
           <el-input
             v-model="formData.desc"
             placeholder="请输入描述"
@@ -188,9 +126,9 @@
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button size="small" @click="closeDialog">取 消</el-button>
+          <el-button @click="closeDialog">取 消</el-button>
           <el-button
-            size="small"
+
             type="primary"
             @click="enterDialog"
           >确 定</el-button>
@@ -199,12 +137,6 @@
     </el-dialog>
   </div>
 </template>
-
-<script>
-export default {
-  name: 'SysDictionary',
-}
-</script>
 
 <script setup>
 import {
@@ -216,11 +148,16 @@ import {
 } from '@/api/sysDictionary' // 此处请自行替换地址
 import WarningBar from '@/components/warningBar/warningBar.vue'
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { formatBoolean, formatDate } from '@/utils/format'
 
-const router = useRouter()
+import sysDictionaryDetail from './sysDictionaryDetail.vue'
+import { Edit } from '@element-plus/icons-vue'
+
+defineOptions({
+  name: 'SysDictionary',
+})
+
+const selectID = ref(1)
 
 const formData = ref({
   name: null,
@@ -252,61 +189,20 @@ const rules = ref({
   ],
 })
 
-const page = ref(1)
-const total = ref(0)
-const pageSize = ref(10)
-const tableData = ref([])
-const searchInfo = ref({})
-
-const onReset = () => {
-  searchInfo.value = {}
-}
-
-// 条件搜索前端看此方法
-const onSubmit = () => {
-  page.value = 1
-  pageSize.value = 10
-  if (searchInfo.value.status === '') {
-    searchInfo.value.status = null
-  }
-  getTableData()
-}
-
-// 分页
-const handleSizeChange = (val) => {
-  pageSize.value = val
-  getTableData()
-}
-
-const handleCurrentChange = (val) => {
-  page.value = val
-  getTableData()
-}
+const dictionaryData = ref([])
 
 // 查询
 const getTableData = async() => {
-  const table = await getSysDictionaryList({
-    page: page.value,
-    pageSize: pageSize.value,
-    ...searchInfo.value,
-  })
-  if (table.code === 0) {
-    tableData.value = table.data.list
-    total.value = table.data.total
-    page.value = table.data.page
-    pageSize.value = table.data.pageSize
+  const res = await getSysDictionaryList()
+  if (res.code === 0) {
+    dictionaryData.value = res.data
   }
 }
 
 getTableData()
 
 const toDetail = (row) => {
-  router.push({
-    name: 'dictionaryDetail',
-    params: {
-      id: row.ID,
-    },
-  })
+  selectID.value = row.ID
 }
 
 const dialogFormVisible = ref(false)
@@ -336,9 +232,6 @@ const deleteSysDictionaryFunc = async(row) => {
       type: 'success',
       message: '删除成功',
     })
-    if (tableData.value.length === 1 && page.value > 1) {
-      page.value--
-    }
     getTableData()
   }
 }
@@ -372,4 +265,12 @@ const openDialog = () => {
 }
 </script>
 
-<style></style>
+<style>
+.dict-box{
+  height: calc(100vh - 240px);
+}
+.active {
+  background-color: var(--el-color-primary) !important;
+  color: #fff;
+}
+</style>

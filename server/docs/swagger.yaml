@@ -1,31 +1,15 @@
-basePath: /
 definitions:
-  autocode.AutoCodeExample:
-    properties:
-      autoCodeExampleField:
-        description: 展示值
-        type: string
-      createdAt:
-        description: 创建时间
-        type: string
-      id:
-        description: 主键ID
-        type: integer
-      updatedAt:
-        description: 更新时间
-        type: string
-    type: object
   config.AliyunOSS:
     properties:
-      accessKeyId:
+      access-key-id:
         type: string
-      accessKeySecret:
+      access-key-secret:
         type: string
-      basePath:
+      base-path:
         type: string
-      bucketName:
+      bucket-name:
         type: string
-      bucketUrl:
+      bucket-url:
         type: string
       endpoint:
         type: string
@@ -36,42 +20,50 @@ definitions:
         type: string
       server:
         type: string
-      serverApi:
+      server-api:
         type: string
-      serverInitialize:
+      server-initialize:
         type: string
-      serverModel:
+      server-model:
         type: string
-      serverRequest:
+      server-plug:
         type: string
-      serverRouter:
+      server-request:
         type: string
-      serverService:
+      server-router:
         type: string
-      transferRestart:
+      server-service:
+        type: string
+      transfer-restart:
         type: boolean
       web:
         type: string
-      webApi:
+      web-api:
         type: string
-      webForm:
+      web-form:
         type: string
-      webTable:
+      web-table:
         type: string
     type: object
   config.AwsS3:
     properties:
-      baseURL:
+      base-url:
         type: string
       bucket:
         type: string
-      pathPrefix:
+      disable-ssl:
+        type: boolean
+      endpoint:
+        type: string
+      path-prefix:
         type: string
       region:
         type: string
-      secretID:
+      s3-force-path-style:
+        type: boolean
+      secret-id:
         type: string
-      secretKey:
+      secret-key:
         type: string
     type: object
   config.CORS:
@@ -98,95 +90,21 @@ definitions:
     type: object
   config.Captcha:
     properties:
-      imgHeight:
+      img-height:
         description: 验证码高度
         type: integer
-      imgWidth:
+      img-width:
         description: 验证码宽度
         type: integer
-      keyLong:
+      key-long:
         description: 验证码长度
         type: integer
-    type: object
-  config.Casbin:
-    properties:
-      modelPath:
-        description: 存放casbin模型的相对路径
-        type: string
-    type: object
-  config.DB:
-    properties:
-      alias-name:
-        type: string
-      config:
-        description: 高级配置
-        type: string
-      dbname:
-        description: 数据库名
-        type: string
-      disable:
-        type: boolean
-      logMode:
-        description: 是否开启Gorm全局日志
-        type: string
-      logZap:
-        type: boolean
-      maxIdleConns:
-        description: 空闲中的最大连接数
+      open-captcha:
+        description: 防爆破验证码开启此数，0代表每次登录都需要验证码，其他数字代表错误密码此数，如3代表错误三次后出现验证码
         type: integer
-      maxOpenConns:
-        description: 打开到数据库的最大连接数
+      open-captcha-timeout:
+        description: 防爆破验证码超时时间，单位：s(秒)
         type: integer
-      password:
-        description: 数据库密码
-        type: string
-      path:
-        description: 服务器地址:端口
-        type: string
-      port:
-        description: :端口
-        type: string
-      type:
-        type: string
-      username:
-        description: 数据库用户名
-        type: string
-    type: object
-  config.Detail:
-    properties:
-      compareField:
-        description: 需要比较时间的字段
-        type: string
-      interval:
-        description: 时间间隔
-        type: string
-      tableName:
-        description: 需要清理的表名
-        type: string
-    type: object
-  config.Email:
-    properties:
-      from:
-        description: 收件人
-        type: string
-      host:
-        description: 服务器地址
-        type: string
-      isSSL:
-        description: 是否SSL
-        type: boolean
-      nickname:
-        description: 昵称
-        type: string
-      port:
-        description: 端口
-        type: integer
-      secret:
-        description: 密钥
-        type: string
-      to:
-        description: 收件人:多个以英文逗号分隔
-        type: string
     type: object
   config.Excel:
     properties:
@@ -195,7 +113,7 @@ definitions:
     type: object
   config.HuaWeiObs:
     properties:
-      accessKey:
+      access-key:
         type: string
       bucket:
         type: string
@@ -203,28 +121,118 @@ definitions:
         type: string
       path:
         type: string
-      secretKey:
+      secret-key:
         type: string
     type: object
   config.JWT:
     properties:
-      bufferTime:
+      buffer-time:
         description: 缓冲时间
-        type: integer
-      expiresTime:
+        type: string
+      expires-time:
         description: 过期时间
-        type: integer
+        type: string
       issuer:
         description: 签发者
         type: string
-      signingKey:
+      signing-key:
         description: jwt签名
         type: string
     type: object
   config.Local:
     properties:
       path:
-        description: 本地文件路径
+        description: 本地文件访问路径
+        type: string
+      store-path:
+        description: 本地文件存储路径
+        type: string
+    type: object
+  config.Mongo:
+    properties:
+      coll:
+        description: collection name
+        type: string
+      connect-timeout-ms:
+        description: 连接超时时间
+        type: integer
+      database:
+        description: database name
+        type: string
+      hosts:
+        description: 主机列表
+        items:
+          $ref: '#/definitions/config.MongoHost'
+        type: array
+      is-zap:
+        description: 是否开启zap日志
+        type: boolean
+      max-pool-size:
+        description: 最大连接池
+        type: integer
+      min-pool-size:
+        description: 最小连接池
+        type: integer
+      options:
+        description: mongodb options
+        type: string
+      password:
+        description: 密码
+        type: string
+      socket-timeout-ms:
+        description: socket超时时间
+        type: integer
+      username:
+        description: 用户名
+        type: string
+    type: object
+  config.MongoHost:
+    properties:
+      host:
+        description: ip地址
+        type: string
+      port:
+        description: 端口
+        type: string
+    type: object
+  config.Mssql:
+    properties:
+      config:
+        description: 高级配置
+        type: string
+      db-name:
+        description: 数据库名
+        type: string
+      engine:
+        default: InnoDB
+        description: 数据库引擎，默认InnoDB
+        type: string
+      log-mode:
+        description: 是否开启Gorm全局日志
+        type: string
+      log-zap:
+        description: 是否通过zap写入日志文件
+        type: boolean
+      max-idle-conns:
+        description: 空闲中的最大连接数
+        type: integer
+      max-open-conns:
+        description: 打开到数据库的最大连接数
+        type: integer
+      password:
+        description: 数据库密码
+        type: string
+      path:
+        type: string
+      port:
+        type: string
+      prefix:
+        type: string
+      singular:
+        description: 是否开启全局禁用复数，true表示开启
+        type: boolean
+      username:
+        description: 数据库密码
         type: string
     type: object
   config.Mysql:
@@ -232,32 +240,79 @@ definitions:
       config:
         description: 高级配置
         type: string
-      dbname:
+      db-name:
         description: 数据库名
         type: string
-      logMode:
+      engine:
+        default: InnoDB
+        description: 数据库引擎，默认InnoDB
+        type: string
+      log-mode:
         description: 是否开启Gorm全局日志
         type: string
-      logZap:
+      log-zap:
         description: 是否通过zap写入日志文件
         type: boolean
-      maxIdleConns:
+      max-idle-conns:
         description: 空闲中的最大连接数
         type: integer
-      maxOpenConns:
+      max-open-conns:
         description: 打开到数据库的最大连接数
         type: integer
       password:
         description: 数据库密码
         type: string
       path:
-        description: 服务器地址
         type: string
       port:
-        description: 端口
         type: string
+      prefix:
+        type: string
+      singular:
+        description: 是否开启全局禁用复数，true表示开启
+        type: boolean
       username:
-        description: 数据库用户名
+        description: 数据库密码
+        type: string
+    type: object
+  config.Oracle:
+    properties:
+      config:
+        description: 高级配置
+        type: string
+      db-name:
+        description: 数据库名
+        type: string
+      engine:
+        default: InnoDB
+        description: 数据库引擎，默认InnoDB
+        type: string
+      log-mode:
+        description: 是否开启Gorm全局日志
+        type: string
+      log-zap:
+        description: 是否通过zap写入日志文件
+        type: boolean
+      max-idle-conns:
+        description: 空闲中的最大连接数
+        type: integer
+      max-open-conns:
+        description: 打开到数据库的最大连接数
+        type: integer
+      password:
+        description: 数据库密码
+        type: string
+      path:
+        type: string
+      port:
+        type: string
+      prefix:
+        type: string
+      singular:
+        description: 是否开启全局禁用复数，true表示开启
+        type: boolean
+      username:
+        description: 数据库密码
         type: string
     type: object
   config.Pgsql:
@@ -265,52 +320,59 @@ definitions:
       config:
         description: 高级配置
         type: string
-      dbname:
+      db-name:
         description: 数据库名
         type: string
-      logMode:
+      engine:
+        default: InnoDB
+        description: 数据库引擎，默认InnoDB
+        type: string
+      log-mode:
         description: 是否开启Gorm全局日志
         type: string
-      logZap:
+      log-zap:
         description: 是否通过zap写入日志文件
         type: boolean
-      maxIdleConns:
+      max-idle-conns:
         description: 空闲中的最大连接数
         type: integer
-      maxOpenConns:
+      max-open-conns:
         description: 打开到数据库的最大连接数
         type: integer
       password:
         description: 数据库密码
         type: string
       path:
-        description: 服务器地址:端口
         type: string
       port:
-        description: :端口
         type: string
+      prefix:
+        type: string
+      singular:
+        description: 是否开启全局禁用复数，true表示开启
+        type: boolean
       username:
-        description: 数据库用户名
+        description: 数据库密码
         type: string
     type: object
   config.Qiniu:
     properties:
-      accessKey:
+      access-key:
         description: 秘钥AK
         type: string
       bucket:
         description: 空间名称
         type: string
-      imgPath:
+      img-path:
         description: CDN加速域名
         type: string
-      secretKey:
+      secret-key:
         description: 秘钥SK
         type: string
-      useCdnDomains:
+      use-cdn-domains:
         description: 上传是否使用CDN上传加速
         type: boolean
-      useHttps:
+      use-https:
         description: 是否使用https
         type: boolean
       zone:
@@ -331,112 +393,198 @@ definitions:
     type: object
   config.Server:
     properties:
-      aliyunOSS:
+      aliyun-oss:
         $ref: '#/definitions/config.AliyunOSS'
-      autoCode:
-        $ref: '#/definitions/config.Autocode'
+      autocode:
+        allOf:
+        - $ref: '#/definitions/config.Autocode'
         description: auto
-      awsS3:
+      aws-s3:
         $ref: '#/definitions/config.AwsS3'
       captcha:
         $ref: '#/definitions/config.Captcha'
-      casbin:
-        $ref: '#/definitions/config.Casbin'
       cors:
-        $ref: '#/definitions/config.CORS'
+        allOf:
+        - $ref: '#/definitions/config.CORS'
         description: 跨域配置
       db-list:
         items:
-          $ref: '#/definitions/config.DB'
+          $ref: '#/definitions/config.SpecializedDB'
         type: array
       email:
-        $ref: '#/definitions/config.Email'
+        $ref: '#/definitions/github_com_flipped-aurora_gin-vue-admin_server_config.Email'
       excel:
         $ref: '#/definitions/config.Excel'
-      huaWeiObs:
+      hua-wei-obs:
         $ref: '#/definitions/config.HuaWeiObs'
       jwt:
         $ref: '#/definitions/config.JWT'
       local:
-        $ref: '#/definitions/config.Local'
+        allOf:
+        - $ref: '#/definitions/config.Local'
         description: oss
+      mongo:
+        $ref: '#/definitions/config.Mongo'
+      mssql:
+        $ref: '#/definitions/config.Mssql'
       mysql:
-        $ref: '#/definitions/config.Mysql'
+        allOf:
+        - $ref: '#/definitions/config.Mysql'
         description: gorm
+      oracle:
+        $ref: '#/definitions/config.Oracle'
       pgsql:
         $ref: '#/definitions/config.Pgsql'
       qiniu:
         $ref: '#/definitions/config.Qiniu'
       redis:
         $ref: '#/definitions/config.Redis'
+      sqlite:
+        $ref: '#/definitions/config.Sqlite'
       system:
         $ref: '#/definitions/config.System'
-      tencentCOS:
+      tencent-cos:
         $ref: '#/definitions/config.TencentCOS'
-      timer:
-        $ref: '#/definitions/config.Timer'
       zap:
         $ref: '#/definitions/config.Zap'
+    type: object
+  config.SpecializedDB:
+    properties:
+      alias-name:
+        type: string
+      config:
+        description: 高级配置
+        type: string
+      db-name:
+        description: 数据库名
+        type: string
+      disable:
+        type: boolean
+      engine:
+        default: InnoDB
+        description: 数据库引擎，默认InnoDB
+        type: string
+      log-mode:
+        description: 是否开启Gorm全局日志
+        type: string
+      log-zap:
+        description: 是否通过zap写入日志文件
+        type: boolean
+      max-idle-conns:
+        description: 空闲中的最大连接数
+        type: integer
+      max-open-conns:
+        description: 打开到数据库的最大连接数
+        type: integer
+      password:
+        description: 数据库密码
+        type: string
+      path:
+        type: string
+      port:
+        type: string
+      prefix:
+        type: string
+      singular:
+        description: 是否开启全局禁用复数，true表示开启
+        type: boolean
+      type:
+        type: string
+      username:
+        description: 数据库密码
+        type: string
+    type: object
+  config.Sqlite:
+    properties:
+      config:
+        description: 高级配置
+        type: string
+      db-name:
+        description: 数据库名
+        type: string
+      engine:
+        default: InnoDB
+        description: 数据库引擎，默认InnoDB
+        type: string
+      log-mode:
+        description: 是否开启Gorm全局日志
+        type: string
+      log-zap:
+        description: 是否通过zap写入日志文件
+        type: boolean
+      max-idle-conns:
+        description: 空闲中的最大连接数
+        type: integer
+      max-open-conns:
+        description: 打开到数据库的最大连接数
+        type: integer
+      password:
+        description: 数据库密码
+        type: string
+      path:
+        type: string
+      port:
+        type: string
+      prefix:
+        type: string
+      singular:
+        description: 是否开启全局禁用复数，true表示开启
+        type: boolean
+      username:
+        description: 数据库密码
+        type: string
     type: object
   config.System:
     properties:
       addr:
         description: 端口值
         type: integer
-      dbType:
+      db-type:
         description: 数据库类型:mysql(默认)|sqlite|sqlserver|postgresql
         type: string
       env:
         description: 环境值
         type: string
-      iplimitCount:
+      iplimit-count:
         type: integer
-      iplimitTime:
+      iplimit-time:
         type: integer
-      ossType:
+      oss-type:
         description: Oss类型
         type: string
-      useMultipoint:
+      router-prefix:
+        type: string
+      use-mongo:
+        description: 使用redis
+        type: boolean
+      use-multipoint:
         description: 多点登录拦截
         type: boolean
-      useRedis:
+      use-redis:
         description: 使用redis
         type: boolean
     type: object
   config.TencentCOS:
     properties:
-      baseURL:
+      base-url:
         type: string
       bucket:
         type: string
-      pathPrefix:
+      path-prefix:
         type: string
       region:
         type: string
-      secretID:
+      secret-id:
         type: string
-      secretKey:
+      secret-key:
         type: string
-    type: object
-  config.Timer:
-    properties:
-      detail:
-        items:
-          $ref: '#/definitions/config.Detail'
-        type: array
-      spec:
-        description: CRON表达式
-        type: string
-      start:
-        description: 是否启用
-        type: boolean
     type: object
   config.Zap:
     properties:
       director:
         description: 日志文件夹
         type: string
-      encodeLevel:
+      encode-level:
         description: 编码级
         type: string
       format:
@@ -445,21 +593,27 @@ definitions:
       level:
         description: 级别
         type: string
-      logInConsole:
+      log-in-console:
         description: 输出控制台
         type: boolean
+      max-age:
+        description: 日志留存时间
+        type: integer
       prefix:
         description: 日志前缀
         type: string
-      showLine:
+      show-line:
         description: 显示行
         type: boolean
-      stacktraceKey:
+      stacktrace-key:
         description: 栈名
         type: string
     type: object
   example.ExaCustomer:
     properties:
+      ID:
+        description: 主键ID
+        type: integer
       createdAt:
         description: 创建时间
         type: string
@@ -469,15 +623,13 @@ definitions:
       customerPhoneData:
         description: 客户手机号
         type: string
-      id:
-        description: 主键ID
-        type: integer
       sysUser:
-        $ref: '#/definitions/system.SysUser'
+        allOf:
+        - $ref: '#/definitions/system.SysUser'
         description: 管理详情
       sysUserAuthorityID:
         description: 管理角色ID
-        type: string
+        type: integer
       sysUserId:
         description: 管理ID
         type: integer
@@ -487,6 +639,9 @@ definitions:
     type: object
   example.ExaFile:
     properties:
+      ID:
+        description: 主键ID
+        type: integer
       chunkTotal:
         type: integer
       createdAt:
@@ -502,9 +657,6 @@ definitions:
         type: string
       filePath:
         type: string
-      id:
-        description: 主键ID
-        type: integer
       isFinish:
         type: boolean
       updatedAt:
@@ -513,6 +665,9 @@ definitions:
     type: object
   example.ExaFileChunk:
     properties:
+      ID:
+        description: 主键ID
+        type: integer
       createdAt:
         description: 创建时间
         type: string
@@ -522,21 +677,18 @@ definitions:
         type: integer
       fileChunkPath:
         type: string
-      id:
-        description: 主键ID
-        type: integer
       updatedAt:
         description: 更新时间
         type: string
     type: object
   example.ExaFileUploadAndDownload:
     properties:
+      ID:
+        description: 主键ID
+        type: integer
       createdAt:
         description: 创建时间
         type: string
-      id:
-        description: 主键ID
-        type: integer
       key:
         description: 编号
         type: string
@@ -553,21 +705,35 @@ definitions:
         description: 文件地址
         type: string
     type: object
-  example.ExcelInfo:
+  github_com_flipped-aurora_gin-vue-admin_server_config.Email:
     properties:
-      fileName:
-        description: 文件名
+      from:
+        description: 发件人  你自己要发邮件的邮箱
         type: string
-      infoList:
-        items:
-          $ref: '#/definitions/system.SysBaseMenu'
-        type: array
+      host:
+        description: 服务器地址 例如 smtp.qq.com  请前往QQ或者你要发邮件的邮箱查看其smtp协议
+        type: string
+      is-ssl:
+        description: 是否SSL   是否开启SSL
+        type: boolean
+      nickname:
+        description: 昵称    发件人昵称 通常为自己的邮箱
+        type: string
+      port:
+        description: 端口     请前往QQ或者你要发邮件的邮箱查看其smtp协议 大多为 465
+        type: integer
+      secret:
+        description: 密钥    用于登录的密钥 最好不要用邮箱密码 去邮箱smtp申请一个用于登录的密钥
+        type: string
+      to:
+        description: 收件人:多个以英文逗号分隔 例：a@qq.com b@qq.com 正式开发中请把此项目作为参数使用
+        type: string
     type: object
   request.AddMenuAuthorityInfo:
     properties:
       authorityId:
         description: 角色ID
-        type: string
+        type: integer
       menus:
         items:
           $ref: '#/definitions/system.SysBaseMenu'
@@ -577,7 +743,7 @@ definitions:
     properties:
       authorityId:
         description: 权限id
-        type: string
+        type: integer
       casbinInfos:
         items:
           $ref: '#/definitions/request.CasbinInfo'
@@ -592,16 +758,13 @@ definitions:
         description: 路径
         type: string
     type: object
-  request.ChangePasswordStruct:
+  request.ChangePasswordReq:
     properties:
       newPassword:
         description: 新密码
         type: string
       password:
         description: 密码
-        type: string
-      username:
-        description: 用户名
         type: string
     type: object
   request.Empty:
@@ -610,13 +773,13 @@ definitions:
     properties:
       authorityId:
         description: 角色ID
-        type: string
+        type: integer
     type: object
   request.GetById:
     properties:
       id:
         description: 主键ID
-        type: number
+        type: integer
     type: object
   request.IdsReq:
     properties:
@@ -629,6 +792,9 @@ definitions:
     properties:
       dbName:
         description: 数据库名
+        type: string
+      dbPath:
+        description: sqlite数据库文件路径
         type: string
       dbType:
         description: 数据库类型
@@ -647,7 +813,6 @@ definitions:
         type: string
     required:
     - dbName
-    - userName
     type: object
   request.Login:
     properties:
@@ -666,6 +831,9 @@ definitions:
     type: object
   request.PageInfo:
     properties:
+      keyword:
+        description: 关键字
+        type: string
       page:
         description: 页码
         type: integer
@@ -676,22 +844,47 @@ definitions:
   request.Register:
     properties:
       authorityId:
+        example: int 角色id
         type: string
       authorityIds:
-        items:
-          type: string
-        type: array
+        example: '[]uint 角色id'
+        type: string
+      email:
+        example: 电子邮箱
+        type: string
+      enable:
+        example: int 是否启用
+        type: string
       headerImg:
+        example: 头像链接
         type: string
       nickName:
+        example: 昵称
         type: string
       passWord:
+        example: 密码
+        type: string
+      phone:
+        example: 电话号码
         type: string
       userName:
+        example: 用户名
         type: string
+    type: object
+  request.RollBack:
+    properties:
+      deleteTable:
+        description: 是否删除表
+        type: boolean
+      id:
+        description: 主键ID
+        type: integer
     type: object
   request.SearchApiParams:
     properties:
+      ID:
+        description: 主键ID
+        type: integer
       apiGroup:
         description: api组
         type: string
@@ -704,9 +897,9 @@ definitions:
       description:
         description: api中文描述
         type: string
-      id:
-        description: 主键ID
-        type: integer
+      keyword:
+        description: 关键字
+        type: string
       method:
         description: 方法:创建POST(默认)|查看GET|更新PUT|删除DELETE
         type: string
@@ -730,14 +923,14 @@ definitions:
     properties:
       authorityId:
         description: 角色ID
-        type: string
+        type: integer
     type: object
   request.SetUserAuthorities:
     properties:
       authorityIds:
         description: 角色ID
         items:
-          type: string
+          type: integer
         type: array
       id:
         type: integer
@@ -745,7 +938,7 @@ definitions:
   request.SysAuthorityBtnReq:
     properties:
       authorityId:
-        type: string
+        type: integer
       menuID:
         type: integer
       selected:
@@ -755,6 +948,9 @@ definitions:
     type: object
   request.SysAutoHistory:
     properties:
+      keyword:
+        description: 关键字
+        type: string
       page:
         description: 页码
         type: integer
@@ -805,8 +1001,7 @@ definitions:
     type: object
   response.PageResult:
     properties:
-      list:
-        type: object
+      list: {}
       page:
         type: integer
       pageSize:
@@ -825,8 +1020,7 @@ definitions:
     properties:
       code:
         type: integer
-      data:
-        type: object
+      data: {}
       msg:
         type: string
     type: object
@@ -855,7 +1049,7 @@ definitions:
         $ref: '#/definitions/system.SysAuthority'
       oldAuthorityId:
         description: 旧角色ID
-        type: string
+        type: integer
     type: object
   response.SysAuthorityResponse:
     properties:
@@ -880,6 +1074,8 @@ definitions:
         type: string
       captchaLength:
         type: integer
+      openCaptcha:
+        type: boolean
       picPath:
         type: string
     type: object
@@ -908,9 +1104,15 @@ definitions:
       autoCreateApiToSql:
         description: 是否自动创建api
         type: boolean
+      autoCreateResource:
+        description: 是否自动创建资源标识
+        type: boolean
       autoMoveFile:
         description: 是否自动移动文件
         type: boolean
+      businessDB:
+        description: 业务数据库
+        type: string
       description:
         description: Struct中文名称
         type: string
@@ -918,8 +1120,12 @@ definitions:
         items:
           $ref: '#/definitions/system.Field'
         type: array
+      hasTimer:
+        type: boolean
       humpPackageName:
         description: go文件名称
+        type: string
+      package:
         type: string
       packageName:
         description: 文件名称
@@ -933,6 +1139,9 @@ definitions:
     type: object
   system.Field:
     properties:
+      clearable:
+        description: 是否可清空
+        type: boolean
       columnName:
         description: 数据库字段
         type: string
@@ -944,6 +1153,9 @@ definitions:
         type: string
       dictType:
         description: 字典
+        type: string
+      errorText:
+        description: 校验失败文字
         type: string
       fieldDesc:
         description: 中文名
@@ -960,9 +1172,38 @@ definitions:
       fieldType:
         description: Field数据类型
         type: string
+      require:
+        description: 是否必填
+        type: boolean
+      sort:
+        description: 是否增加排序
+        type: boolean
+    type: object
+  system.Meta:
+    properties:
+      activeName:
+        type: string
+      closeTab:
+        description: 自动关闭tab
+        type: boolean
+      defaultMenu:
+        description: 是否是基础路由（开发中）
+        type: boolean
+      icon:
+        description: 菜单图标
+        type: string
+      keepAlive:
+        description: 是否缓存
+        type: boolean
+      title:
+        description: 菜单名
+        type: string
     type: object
   system.SysApi:
     properties:
+      ID:
+        description: 主键ID
+        type: integer
       apiGroup:
         description: api组
         type: string
@@ -972,9 +1213,6 @@ definitions:
       description:
         description: api中文描述
         type: string
-      id:
-        description: 主键ID
-        type: integer
       method:
         description: 方法:创建POST(默认)|查看GET|更新PUT|删除DELETE
         type: string
@@ -989,7 +1227,7 @@ definitions:
     properties:
       authorityId:
         description: 角色ID
-        type: string
+        type: integer
       authorityName:
         description: 角色名
         type: string
@@ -1015,6 +1253,24 @@ definitions:
         type: array
       parentId:
         description: 父角色ID
+        type: integer
+      updatedAt:
+        description: 更新时间
+        type: string
+    type: object
+  system.SysAutoCode:
+    properties:
+      ID:
+        description: 主键ID
+        type: integer
+      createdAt:
+        description: 创建时间
+        type: string
+      desc:
+        type: string
+      label:
+        type: string
+      packageName:
         type: string
       updatedAt:
         description: 更新时间
@@ -1022,6 +1278,9 @@ definitions:
     type: object
   system.SysBaseMenu:
     properties:
+      ID:
+        description: 主键ID
+        type: integer
       authoritys:
         items:
           $ref: '#/definitions/system.SysAuthority'
@@ -1030,34 +1289,23 @@ definitions:
         items:
           $ref: '#/definitions/system.SysBaseMenu'
         type: array
-      closeTab:
-        description: 自动关闭tab
-        type: boolean
       component:
         description: 对应前端文件路径
         type: string
       createdAt:
         description: 创建时间
         type: string
-      defaultMenu:
-        description: 是否是基础路由（开发中）
-        type: boolean
       hidden:
         description: 是否在列表隐藏
-        type: boolean
-      icon:
-        description: 菜单图标
-        type: string
-      id:
-        description: 主键ID
-        type: integer
-      keepAlive:
-        description: 是否缓存
         type: boolean
       menuBtn:
         items:
           $ref: '#/definitions/system.SysBaseMenuBtn'
         type: array
+      meta:
+        allOf:
+        - $ref: '#/definitions/system.Meta'
+        description: 附加属性
       name:
         description: 路由name
         type: string
@@ -1074,23 +1322,20 @@ definitions:
       sort:
         description: 排序标记
         type: integer
-      title:
-        description: 菜单名
-        type: string
       updatedAt:
         description: 更新时间
         type: string
     type: object
   system.SysBaseMenuBtn:
     properties:
+      ID:
+        description: 主键ID
+        type: integer
       createdAt:
         description: 创建时间
         type: string
       desc:
         type: string
-      id:
-        description: 主键ID
-        type: integer
       name:
         type: string
       sysBaseMenuID:
@@ -1101,12 +1346,12 @@ definitions:
     type: object
   system.SysBaseMenuParameter:
     properties:
+      ID:
+        description: 主键ID
+        type: integer
       createdAt:
         description: 创建时间
         type: string
-      id:
-        description: 主键ID
-        type: integer
       key:
         description: 地址栏携带参数的key
         type: string
@@ -1124,15 +1369,15 @@ definitions:
     type: object
   system.SysDictionary:
     properties:
+      ID:
+        description: 主键ID
+        type: integer
       createdAt:
         description: 创建时间
         type: string
       desc:
         description: 描述
         type: string
-      id:
-        description: 主键ID
-        type: integer
       name:
         description: 字典名（中）
         type: string
@@ -1152,12 +1397,15 @@ definitions:
     type: object
   system.SysDictionaryDetail:
     properties:
+      ID:
+        description: 主键ID
+        type: integer
       createdAt:
         description: 创建时间
         type: string
-      id:
-        description: 主键ID
-        type: integer
+      extend:
+        description: 扩展值
+        type: string
       label:
         description: 展示值
         type: string
@@ -1179,41 +1427,29 @@ definitions:
     type: object
   system.SysMenu:
     properties:
+      ID:
+        description: 主键ID
+        type: integer
       authoritys:
         items:
           $ref: '#/definitions/system.SysAuthority'
         type: array
       btns:
         additionalProperties:
-          type: string
+          type: integer
         type: object
       children:
         items:
           $ref: '#/definitions/system.SysMenu'
         type: array
-      closeTab:
-        description: 自动关闭tab
-        type: boolean
       component:
         description: 对应前端文件路径
         type: string
       createdAt:
         description: 创建时间
         type: string
-      defaultMenu:
-        description: 是否是基础路由（开发中）
-        type: boolean
       hidden:
         description: 是否在列表隐藏
-        type: boolean
-      icon:
-        description: 菜单图标
-        type: string
-      id:
-        description: 主键ID
-        type: integer
-      keepAlive:
-        description: 是否缓存
         type: boolean
       menuBtn:
         items:
@@ -1221,6 +1457,10 @@ definitions:
         type: array
       menuId:
         type: string
+      meta:
+        allOf:
+        - $ref: '#/definitions/system.Meta'
+        description: 附加属性
       name:
         description: 路由name
         type: string
@@ -1237,15 +1477,15 @@ definitions:
       sort:
         description: 排序标记
         type: integer
-      title:
-        description: 菜单名
-        type: string
       updatedAt:
         description: 更新时间
         type: string
     type: object
   system.SysOperationRecord:
     properties:
+      ID:
+        description: 主键ID
+        type: integer
       agent:
         description: 代理
         type: string
@@ -1258,9 +1498,6 @@ definitions:
       error_message:
         description: 错误信息
         type: string
-      id:
-        description: 主键ID
-        type: integer
       ip:
         description: 请求ip
         type: string
@@ -1290,6 +1527,9 @@ definitions:
     type: object
   system.SysUser:
     properties:
+      ID:
+        description: 主键ID
+        type: integer
       activeColor:
         description: 活跃颜色
         type: string
@@ -1301,7 +1541,7 @@ definitions:
         $ref: '#/definitions/system.SysAuthority'
       authorityId:
         description: 用户角色ID
-        type: string
+        type: integer
       baseColor:
         description: 基础颜色
         type: string
@@ -1311,17 +1551,17 @@ definitions:
       email:
         description: 用户邮箱
         type: string
+      enable:
+        description: 用户是否被冻结 1正常 2冻结
+        type: integer
       headerImg:
         description: 用户头像
         type: string
-      id:
-        description: 主键ID
-        type: integer
       nickName:
         description: 用户昵称
         type: string
       phone:
-        description: 用户角色ID
+        description: 用户手机号
         type: string
       sideMode:
         description: 用户侧边主题
@@ -1343,9 +1583,9 @@ definitions:
     type: object
 info:
   contact: {}
-  description: This is a sample Server pets
-  title: Swagger Example API
-  version: 0.0.1
+  description: 使用gin+vue进行极速开发的全栈开发基础平台
+  title: Gin-Vue-Admin Swagger API接口文档
+  version: v2.5.9
 paths:
   /api/createApi:
     post:
@@ -1429,6 +1669,25 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: 删除选中Api
+      tags:
+      - SysApi
+  /api/freshCasbin:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 刷新成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      summary: 刷新casbin缓存
       tags:
       - SysApi
   /api/getAllApis:
@@ -1757,6 +2016,36 @@ paths:
             allOf:
             - $ref: '#/definitions/response.Response'
             - properties:
+                data:
+                  $ref: '#/definitions/response.SysAuthorityBtnRes'
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 获取权限按钮
+      tags:
+      - AuthorityBtn
+  /authorityBtn/setAuthorityBtn:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 菜单id, 角色id, 选中的按钮id
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.SysAuthorityBtnReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 返回列表成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
                 msg:
                   type: string
               type: object
@@ -1765,6 +2054,68 @@ paths:
       summary: 设置权限按钮
       tags:
       - AuthorityBtn
+  /autoCode/createPackage:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 创建package
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/system.SysAutoCode'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 创建package成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 创建package
+      tags:
+      - AutoCode
+  /autoCode/createPlug:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 创建插件模板
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/system.SysAutoCode'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 创建插件模板成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 创建插件模板
+      tags:
+      - AutoCode
   /autoCode/createTemp:
     post:
       consumes:
@@ -1786,6 +2137,37 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: 自动代码模板
+      tags:
+      - AutoCode
+  /autoCode/delPackage:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 创建package
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/system.SysAutoCode'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 删除package成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 删除package
       tags:
       - AutoCode
   /autoCode/delSysHistory:
@@ -1895,6 +2277,30 @@ paths:
       summary: 获取meta信息
       tags:
       - AutoCode
+  /autoCode/getPackage:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 创建package成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 获取package
+      tags:
+      - AutoCode
   /autoCode/getSysHistory:
     post:
       consumes:
@@ -1949,6 +2355,37 @@ paths:
       summary: 获取当前数据库所有表
       tags:
       - AutoCode
+  /autoCode/installPlugin:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: this is a test file
+        in: formData
+        name: plug
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 安装插件成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    type: object
+                  type: array
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 安装插件
+      tags:
+      - AutoCode
   /autoCode/preview:
     post:
       consumes:
@@ -1980,6 +2417,37 @@ paths:
       summary: 预览创建后的代码
       tags:
       - AutoCode
+  /autoCode/pubPlug:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 打包插件
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/system.SysAutoCode'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 打包插件成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 打包插件
+      tags:
+      - AutoCode
   /autoCode/rollback:
     post:
       consumes:
@@ -1990,7 +2458,7 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/request.GetById'
+          $ref: '#/definitions/request.RollBack'
       produces:
       - application/json
       responses:
@@ -2008,179 +2476,6 @@ paths:
       summary: 回滚自动生成代码
       tags:
       - AutoCode
-  /autoCodeExample/createAutoCodeExample:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: AutoCodeExample模型
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/autocode.AutoCodeExample'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 创建AutoCodeExample
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                msg:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      summary: 创建AutoCodeExample
-      tags:
-      - AutoCodeExample
-  /autoCodeExample/deleteAutoCodeExample:
-    delete:
-      consumes:
-      - application/json
-      parameters:
-      - description: AutoCodeExample模型
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/autocode.AutoCodeExample'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 删除AutoCodeExample
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                msg:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      summary: 删除AutoCodeExample
-      tags:
-      - AutoCodeExample
-  /autoCodeExample/findAutoCodeExample:
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - description: 展示值
-        in: query
-        name: autoCodeExampleField
-        type: string
-      - description: 创建时间
-        in: query
-        name: createdAt
-        type: string
-      - description: 主键ID
-        in: query
-        name: id
-        type: integer
-      - description: 更新时间
-        in: query
-        name: updatedAt
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 用id查询AutoCodeExample
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  additionalProperties: true
-                  type: object
-                msg:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      summary: 用id查询AutoCodeExample
-      tags:
-      - AutoCodeExample
-  /autoCodeExample/getAutoCodeExampleList:
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - description: 展示值
-        in: query
-        name: autoCodeExampleField
-        type: string
-      - description: 创建时间
-        in: query
-        name: createdAt
-        type: string
-      - description: 主键ID
-        in: query
-        name: id
-        type: integer
-      - description: 页码
-        in: query
-        name: page
-        type: integer
-      - description: 每页大小
-        in: query
-        name: pageSize
-        type: integer
-      - description: 更新时间
-        in: query
-        name: updatedAt
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 分页获取AutoCodeExample列表,返回包括列表,总数,页码,每页数量
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/response.PageResult'
-                msg:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      summary: 分页获取AutoCodeExample列表
-      tags:
-      - AutoCodeExample
-  /autoCodeExample/updateAutoCodeExample:
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: 更新AutoCodeExample
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/autocode.AutoCodeExample'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 更新AutoCodeExample
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                msg:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      summary: 更新AutoCodeExample
-      tags:
-      - AutoCodeExample
   /base/captcha:
     post:
       consumes:
@@ -2189,7 +2484,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: 生成验证码,返回包括随机数id,base64,验证码长度
+          description: 生成验证码,返回包括随机数id,base64,验证码长度,是否开启验证码
           schema:
             allOf:
             - $ref: '#/definitions/response.Response'
@@ -2320,6 +2615,10 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
       - description: 创建时间
         in: query
         name: createdAt
@@ -2332,14 +2631,10 @@ paths:
         in: query
         name: customerPhoneData
         type: string
-      - description: 主键ID
-        in: query
-        name: id
-        type: integer
       - description: 管理角色ID
         in: query
         name: sysUserAuthorityID
-        type: string
+        type: integer
       - description: 管理ID
         in: query
         name: sysUserId
@@ -2426,6 +2721,10 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
       - description: 页码
         in: query
         name: page
@@ -2488,95 +2787,6 @@ paths:
       summary: 发送邮件
       tags:
       - System
-  /excel/downloadTemplate:
-    get:
-      consumes:
-      - multipart/form-data
-      parameters:
-      - description: 模板名称
-        in: query
-        name: fileName
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: ""
-      security:
-      - ApiKeyAuth: []
-      summary: 下载模板
-      tags:
-      - excel
-  /excel/exportExcel:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: 导出Excel文件信息
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/example.ExcelInfo'
-      produces:
-      - application/octet-stream
-      responses:
-        "200":
-          description: ""
-      security:
-      - ApiKeyAuth: []
-      summary: 导出Excel
-      tags:
-      - excel
-  /excel/importExcel:
-    post:
-      consumes:
-      - multipart/form-data
-      parameters:
-      - description: 导入Excel文件
-        in: formData
-        name: file
-        required: true
-        type: file
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 导入Excel文件
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                msg:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      summary: 导入Excel文件
-      tags:
-      - excel
-  /excel/loadExcel:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 加载Excel数据,返回包括列表,总数,页码,每页数量
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/response.PageResult'
-                msg:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      summary: 加载Excel数据
-      tags:
-      - excel
   /fileUploadAndDownload/breakpointContinue:
     post:
       consumes:
@@ -3130,6 +3340,10 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
       - description: 创建时间
         in: query
         name: createdAt
@@ -3138,10 +3352,6 @@ paths:
         in: query
         name: desc
         type: string
-      - description: 主键ID
-        in: query
-        name: id
-        type: integer
       - description: 字典名（中）
         in: query
         name: name
@@ -3182,43 +3392,6 @@ paths:
     get:
       consumes:
       - application/json
-      parameters:
-      - description: 创建时间
-        in: query
-        name: createdAt
-        type: string
-      - description: 描述
-        in: query
-        name: desc
-        type: string
-      - description: 主键ID
-        in: query
-        name: id
-        type: integer
-      - description: 字典名（中）
-        in: query
-        name: name
-        type: string
-      - description: 页码
-        in: query
-        name: page
-        type: integer
-      - description: 每页大小
-        in: query
-        name: pageSize
-        type: integer
-      - description: 状态
-        in: query
-        name: status
-        type: boolean
-      - description: 字典名（英）
-        in: query
-        name: type
-        type: string
-      - description: 更新时间
-        in: query
-        name: updatedAt
-        type: string
       produces:
       - application/json
       responses:
@@ -3327,14 +3500,18 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
       - description: 创建时间
         in: query
         name: createdAt
         type: string
-      - description: 主键ID
+      - description: 扩展值
         in: query
-        name: id
-        type: integer
+        name: extend
+        type: string
       - description: 展示值
         in: query
         name: label
@@ -3384,14 +3561,22 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
       - description: 创建时间
         in: query
         name: createdAt
         type: string
-      - description: 主键ID
+      - description: 扩展值
         in: query
-        name: id
-        type: integer
+        name: extend
+        type: string
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
       - description: 展示值
         in: query
         name: label
@@ -3560,6 +3745,10 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
       - description: 代理
         in: query
         name: agent
@@ -3576,10 +3765,6 @@ paths:
         in: query
         name: error_message
         type: string
-      - description: 主键ID
-        in: query
-        name: id
-        type: integer
       - description: 请求ip
         in: query
         name: ip
@@ -3637,6 +3822,10 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
       - description: 代理
         in: query
         name: agent
@@ -3653,13 +3842,13 @@ paths:
         in: query
         name: error_message
         type: string
-      - description: 主键ID
-        in: query
-        name: id
-        type: integer
       - description: 请求ip
         in: query
         name: ip
+        type: string
+      - description: 关键字
+        in: query
+        name: keyword
         type: string
       - description: 延迟
         in: query
@@ -3835,6 +4024,32 @@ paths:
       summary: 设置用户信息
       tags:
       - SysUser
+  /user/admin_register:
+    post:
+      parameters:
+      - description: 用户名, 昵称, 密码, 角色ID
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.Register'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 用户注册账号,返回包括用户信息
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.SysUserResponse'
+                msg:
+                  type: string
+              type: object
+      summary: 用户注册账号
+      tags:
+      - SysUser
   /user/changePassword:
     post:
       parameters:
@@ -3843,7 +4058,7 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/request.ChangePasswordStruct'
+          $ref: '#/definitions/request.ChangePasswordReq'
       produces:
       - application/json
       responses:
@@ -3941,32 +4156,6 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: 分页获取用户列表
-      tags:
-      - SysUser
-  /user/register:
-    post:
-      parameters:
-      - description: 用户名, 昵称, 密码, 角色ID
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/request.Register'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 用户注册账号,返回包括用户信息
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/response.SysUserResponse'
-                msg:
-                  type: string
-              type: object
-      summary: 用户注册账号
       tags:
       - SysUser
   /user/resetPassword:

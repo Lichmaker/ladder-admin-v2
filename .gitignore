@@ -25,10 +25,10 @@ yarn-error.log*
 /server/log/
 /server/gva
 /server/latest_log
+server/config.yaml
 
 *.iml
 web/.pnpm-debug.log
 web/pnpm-lock.yaml
 
-server/config.yaml
-server/config.docker.yaml
+web/.env.development

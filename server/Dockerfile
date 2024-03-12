@@ -1,4 +1,4 @@
-FROM golang:alpine as builder
+FROM golang:1.22.0-alpine3.19  as builder
 
 WORKDIR /go/src/github.com/flipped-aurora/gin-vue-admin/server
 COPY . .
@@ -12,7 +12,7 @@ RUN go env -w GO111MODULE=on \
 
 FROM alpine:latest
 
-LABEL MAINTAINER="SliverHorn@sliver_horn@qq.com"
+LABEL MAINTAINER="lich.wu2014@gmail.com"
 
 WORKDIR /go/src/github.com/flipped-aurora/gin-vue-admin/server
 

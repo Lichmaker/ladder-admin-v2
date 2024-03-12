@@ -5,7 +5,6 @@ import (
 
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
-	"github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
 	"gorm.io/gorm"
 )
 
@@ -87,7 +86,9 @@ func (dictionaryService *DictionaryService) GetSysDictionary(Type string, Id uin
 	} else {
 		flag = *status
 	}
-	err = global.GVA_DB.Where("(type = ? OR id = ?) and status = ?", Type, Id, flag).Preload("SysDictionaryDetails", "status = ?", true).First(&sysDictionary).Error
+	err = global.GVA_DB.Where("(type = ? OR id = ?) and status = ?", Type, Id, flag).Preload("SysDictionaryDetails", func(db *gorm.DB) *gorm.DB {
+		return db.Where("status = ?", true).Order("sort")
+	}).First(&sysDictionary).Error
 	return
 }
 
@@ -98,29 +99,8 @@ func (dictionaryService *DictionaryService) GetSysDictionary(Type string, Id uin
 //@param: info request.SysDictionarySearch
 //@return: err error, list interface{}, total int64
 
-func (dictionaryService *DictionaryService) GetSysDictionaryInfoList(info request.SysDictionarySearch) (list interface{}, total int64, err error) {
-	limit := info.PageSize
-	offset := info.PageSize * (info.Page - 1)
-	// 创建db
-	db := global.GVA_DB.Model(&system.SysDictionary{})
+func (dictionaryService *DictionaryService) GetSysDictionaryInfoList() (list interface{}, err error) {
 	var sysDictionarys []system.SysDictionary
-	// 如果有条件搜索 下方会自动创建搜索语句
-	if info.Name != "" {
-		db = db.Where("`name` LIKE ?", "%"+info.Name+"%")
-	}
-	if info.Type != "" {
-		db = db.Where("`type` LIKE ?", "%"+info.Type+"%")
-	}
-	if info.Status != nil {
-		db = db.Where("`status` = ?", info.Status)
-	}
-	if info.Desc != "" {
-		db = db.Where("`desc` LIKE ?", "%"+info.Desc+"%")
-	}
-	err = db.Count(&total).Error
-	if err != nil {
-		return
-	}
-	err = db.Limit(limit).Offset(offset).Find(&sysDictionarys).Error
-	return sysDictionarys, total, err
+	err = global.GVA_DB.Find(&sysDictionarys).Error
+	return sysDictionarys, err
 }

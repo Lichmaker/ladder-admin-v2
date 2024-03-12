@@ -3,9 +3,10 @@
  */
 
 const config = {
-  appName: 'Ladder Admin',
-  appLogo: 'https://www.gin-vue-admin.com/img/logo.png',
-  showViteLogo: true
+  appName: 'Ladder-Admin',
+  appLogo: '',
+  showViteLogo: false,
+  logs: [],
 }
 
 export const viteLogo = (env) => {
@@ -18,7 +19,7 @@ export const viteLogo = (env) => {
     )
     console.log(
       chalk.green(
-        `> 当前版本:v2.5.3b`
+        `> 当前版本:v2.5.9`
       )
     )
     console.log(

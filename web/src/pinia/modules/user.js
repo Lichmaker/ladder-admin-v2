@@ -5,6 +5,7 @@ import { ElLoading, ElMessage } from 'element-plus'
 import { defineStore } from 'pinia'
 import { ref, computed, watch } from 'vue'
 import { useRouterStore } from './router'
+import cookie from 'js-cookie'
 
 export const useUserStore = defineStore('user', () => {
   const loadingInstance = ref(null)
@@ -15,10 +16,10 @@ export const useUserStore = defineStore('user', () => {
     headerImg: '',
     authority: {},
     sideMode: 'dark',
-    activeColor: '#4D70FF',
+    activeColor: 'var(--el-color-primary)',
     baseColor: '#fff'
   })
-  const token = ref(window.localStorage.getItem('token') || '')
+  const token = ref(window.localStorage.getItem('token') || cookie.get('x-token') || '')
   const setUserInfo = (val) => {
     userInfo.value = val
   }
@@ -65,8 +66,21 @@ export const useUserStore = defineStore('user', () => {
         asyncRouters.forEach(asyncRouter => {
           router.addRoute(asyncRouter)
         })
-        router.push({ name: userInfo.value.authority.defaultRouter })
+
+        if (!router.hasRoute(userInfo.value.authority.defaultRouter)) {
+          ElMessage.error('请联系管理员进行授权')
+        } else {
+          await router.replace({ name: userInfo.value.authority.defaultRouter })
+        }
+
         loadingInstance.value.close()
+
+        const isWin = ref(/windows/i.test(navigator.userAgent))
+        if (isWin.value) {
+          window.localStorage.setItem('osType', 'WIN')
+        } else {
+          window.localStorage.setItem('osType', 'MAC')
+        }
         return true
       }
     } catch (e) {
@@ -78,9 +92,7 @@ export const useUserStore = defineStore('user', () => {
   const LoginOut = async() => {
     const res = await jsonInBlacklist()
     if (res.code === 0) {
-      token.value = ''
-      sessionStorage.clear()
-      localStorage.clear()
+      await ClearStorage()
       router.push({ name: 'Login', replace: true })
       window.location.reload()
     }
@@ -90,6 +102,7 @@ export const useUserStore = defineStore('user', () => {
     token.value = ''
     sessionStorage.clear()
     localStorage.clear()
+    cookie.remove('x-token')
   }
   /* 设置侧边栏模式*/
   const changeSideMode = async(data) => {
@@ -123,10 +136,7 @@ export const useUserStore = defineStore('user', () => {
     }
   })
   const activeColor = computed(() => {
-    if (userInfo.value.sideMode === 'dark' || userInfo.value.sideMode === 'light') {
-      return '#4D70FF'
-    }
-    return userInfo.activeColor
+    return 'var(--el-color-primary)'
   })
 
   watch(() => token.value, () => {

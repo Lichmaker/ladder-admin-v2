@@ -90,3 +90,12 @@ export default class ImageCompress {
     return new Blob([ab], { type: mimeString, lastModifiedDate: new Date() })
   }
 }
+
+const path = import.meta.env.VITE_FILE_API + '/'
+export const getUrl = (url) => url && url.slice(0, 4) !== 'http' ? path + url : url
+
+export const isVideoExt = (url) => url.endsWith('.mp4') || url.endsWith('.mov') || url.endsWith('.webm') || url.endsWith('.ogg');
+
+export const isVideoMime = (type) => type == 'video/mp4' || type == 'video/webm' || type == 'video/ogg';
+
+export const isImageMime = (type) => type == 'image/jpeg' || type == 'image/png' || type == 'image/webp' || type == 'image/svg+xml';

@@ -4,11 +4,38 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	systemReq "github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
 	"github.com/gin-gonic/gin"
-	uuid "github.com/satori/go.uuid"
+	"github.com/gofrs/uuid/v5"
+	"net"
 )
 
+func ClearToken(c *gin.Context) {
+	// 增加cookie x-token 向来源的web添加
+	host, _, err := net.SplitHostPort(c.Request.Host)
+	if err != nil {
+		host = c.Request.Host
+	}
+	c.SetCookie("x-token", "", -1, "/", host, true, false)
+}
+
+func SetToken(c *gin.Context, token string, maxAge int) {
+	// 增加cookie x-token 向来源的web添加
+	host, _, err := net.SplitHostPort(c.Request.Host)
+	if err != nil {
+		host = c.Request.Host
+	}
+	c.SetCookie("x-token", token, maxAge, "/", host, true, false)
+}
+
+func GetToken(c *gin.Context) string {
+	token, _ := c.Cookie("x-token")
+	if token == "" {
+		token = c.Request.Header.Get("x-token")
+	}
+	return token
+}
+
 func GetClaims(c *gin.Context) (*systemReq.CustomClaims, error) {
-	token := c.Request.Header.Get("x-token")
+	token := GetToken(c)
 	j := NewJWT()
 	claims, err := j.ParseToken(token)
 	if err != nil {
@@ -23,11 +50,11 @@ func GetUserID(c *gin.Context) uint {
 		if cl, err := GetClaims(c); err != nil {
 			return 0
 		} else {
-			return cl.ID
+			return cl.BaseClaims.ID
 		}
 	} else {
 		waitUse := claims.(*systemReq.CustomClaims)
-		return waitUse.ID
+		return waitUse.BaseClaims.ID
 	}
 }
 
@@ -70,5 +97,19 @@ func GetUserInfo(c *gin.Context) *systemReq.CustomClaims {
 	} else {
 		waitUse := claims.(*systemReq.CustomClaims)
 		return waitUse
+	}
+}
+
+// GetUserName 从Gin的Context中获取从jwt解析出来的用户名
+func GetUserName(c *gin.Context) string {
+	if claims, exists := c.Get("claims"); !exists {
+		if cl, err := GetClaims(c); err != nil {
+			return ""
+		} else {
+			return cl.Username
+		}
+	} else {
+		waitUse := claims.(*systemReq.CustomClaims)
+		return waitUse.Username
 	}
 }

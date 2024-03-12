@@ -45,7 +45,6 @@ func (i *initCasbin) InitializeData(ctx context.Context) (context.Context, error
 		return ctx, system.ErrMissingDBContext
 	}
 	entities := []adapter.CasbinRule{
-		{Ptype: "p", V0: "888", V1: "/base/login", V2: "POST"},
 		{Ptype: "p", V0: "888", V1: "/user/admin_register", V2: "POST"},
 
 		{Ptype: "p", V0: "888", V1: "/api/createApi", V2: "POST"},
@@ -122,6 +121,7 @@ func (i *initCasbin) InitializeData(ctx context.Context) (context.Context, error
 		{Ptype: "p", V0: "888", V1: "/autoCode/delPackage", V2: "POST"},
 		{Ptype: "p", V0: "888", V1: "/autoCode/createPlug", V2: "POST"},
 		{Ptype: "p", V0: "888", V1: "/autoCode/installPlugin", V2: "POST"},
+		{Ptype: "p", V0: "888", V1: "/autoCode/pubPlug", V2: "POST"},
 
 		{Ptype: "p", V0: "888", V1: "/sysDictionaryDetail/findSysDictionaryDetail", V2: "GET"},
 		{Ptype: "p", V0: "888", V1: "/sysDictionaryDetail/updateSysDictionaryDetail", V2: "PUT"},
@@ -148,16 +148,20 @@ func (i *initCasbin) InitializeData(ctx context.Context) (context.Context, error
 		{Ptype: "p", V0: "888", V1: "/simpleUploader/checkFileMd5", V2: "GET"},
 		{Ptype: "p", V0: "888", V1: "/simpleUploader/mergeFileMd5", V2: "GET"},
 
-		{Ptype: "p", V0: "888", V1: "/excel/importExcel", V2: "POST"},
-		{Ptype: "p", V0: "888", V1: "/excel/loadExcel", V2: "GET"},
-		{Ptype: "p", V0: "888", V1: "/excel/exportExcel", V2: "POST"},
-		{Ptype: "p", V0: "888", V1: "/excel/downloadTemplate", V2: "GET"},
-
 		{Ptype: "p", V0: "888", V1: "/authorityBtn/setAuthorityBtn", V2: "POST"},
 		{Ptype: "p", V0: "888", V1: "/authorityBtn/getAuthorityBtn", V2: "POST"},
 		{Ptype: "p", V0: "888", V1: "/authorityBtn/canRemoveAuthorityBtn", V2: "POST"},
 
-		{Ptype: "p", V0: "8881", V1: "/base/login", V2: "POST"},
+		{Ptype: "p", V0: "888", V1: "/sysExportTemplate/createSysExportTemplate", V2: "POST"},
+		{Ptype: "p", V0: "888", V1: "/sysExportTemplate/deleteSysExportTemplate", V2: "DELETE"},
+		{Ptype: "p", V0: "888", V1: "/sysExportTemplate/deleteSysExportTemplateByIds", V2: "DELETE"},
+		{Ptype: "p", V0: "888", V1: "/sysExportTemplate/updateSysExportTemplate", V2: "PUT"},
+		{Ptype: "p", V0: "888", V1: "/sysExportTemplate/findSysExportTemplate", V2: "GET"},
+		{Ptype: "p", V0: "888", V1: "/sysExportTemplate/getSysExportTemplateList", V2: "GET"},
+		{Ptype: "p", V0: "888", V1: "/sysExportTemplate/exportExcel", V2: "GET"},
+		{Ptype: "p", V0: "888", V1: "/sysExportTemplate/exportTemplate", V2: "GET"},
+		{Ptype: "p", V0: "888", V1: "/sysExportTemplate/importExcel", V2: "POST"},
+
 		{Ptype: "p", V0: "8881", V1: "/user/admin_register", V2: "POST"},
 		{Ptype: "p", V0: "8881", V1: "/api/createApi", V2: "POST"},
 		{Ptype: "p", V0: "8881", V1: "/api/getApiList", V2: "POST"},
@@ -197,7 +201,6 @@ func (i *initCasbin) InitializeData(ctx context.Context) (context.Context, error
 		{Ptype: "p", V0: "8881", V1: "/customer/customerList", V2: "GET"},
 		{Ptype: "p", V0: "8881", V1: "/user/getUserInfo", V2: "GET"},
 
-		{Ptype: "p", V0: "9528", V1: "/base/login", V2: "POST"},
 		{Ptype: "p", V0: "9528", V1: "/user/admin_register", V2: "POST"},
 		{Ptype: "p", V0: "9528", V1: "/api/createApi", V2: "POST"},
 		{Ptype: "p", V0: "9528", V1: "/api/getApiList", V2: "POST"},

@@ -23,14 +23,13 @@
   </el-menu-item>
 </template>
 
-<script>
-export default {
-  name: 'MenuItem',
-}
-</script>
 
 <script setup>
 import { ref, watch } from 'vue'
+
+defineOptions({
+  name: 'MenuItem',
+})
 
 const props = defineProps({
   routerInfo: {
@@ -78,6 +77,7 @@ watch(() => props.theme, () => {
     display: flex;
     justify-content: flex-start;
     align-items: center;
+    padding-left: 4px;
 
 .gva-menu-item-title {
     flex:1;

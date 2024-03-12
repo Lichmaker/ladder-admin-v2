@@ -1,10 +1,11 @@
 package main
 
 import (
+	"go.uber.org/zap"
+
 	"github.com/flipped-aurora/gin-vue-admin/server/core"
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/initialize"
-	"go.uber.org/zap"
 )
 
 //go:generate go env -w GO111MODULE=on
@@ -12,25 +13,32 @@ import (
 //go:generate go mod tidy
 //go:generate go mod download
 
-// @title Swagger Example API
-// @version 0.0.1
-// @description This is a sample Server pets
-// @securityDefinitions.apikey ApiKeyAuth
-// @in header
-// @name x-token
-// @BasePath /
+// @title                       Gin-Vue-Admin Swagger API接口文档
+// @version                     v2.5.9
+// @description                 使用gin+vue进行极速开发的全栈开发基础平台
+// @securityDefinitions.apikey  ApiKeyAuth
+// @in                          header
+// @name                        x-token
+// @BasePath                    /
 func main() {
 	global.GVA_VP = core.Viper() // 初始化Viper
-	global.GVA_LOG = core.Zap()  // 初始化zap日志库
+	initialize.OtherInit()
+	global.GVA_LOG = core.Zap() // 初始化zap日志库
 	zap.ReplaceGlobals(global.GVA_LOG)
 	global.GVA_DB = initialize.Gorm() // gorm连接数据库
-	initialize.Timer()
 	initialize.DBList()
 	if global.GVA_DB != nil {
-		initialize.RegisterTables(global.GVA_DB) // 初始化表
+		initialize.RegisterTables() // 初始化表
 		// 程序结束前关闭数据库链接
 		db, _ := global.GVA_DB.DB()
 		defer db.Close()
+
+		// 连接 v2ray-manager
+		initialize.V2rayManager()
+
+		// 最后再启动定时任务
+		initialize.Timer()
 	}
+
 	core.RunWindowsServer()
 }

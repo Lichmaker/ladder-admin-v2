@@ -1,4 +1,5 @@
 import service from '@/utils/request'
+import { unique } from '@/utils/arrayFun'
 // @Summary 用户登录
 // @Produce  application/json
 // @Param data body {username:"string",password:"string"}
@@ -164,3 +165,71 @@ export const resetPassword = (data) => {
     data: data
   })
 }
+
+export const batchGetUserInfoByUUID = async(uuidArray) => {
+  const res = new Map() // 存储结果
+
+  // 数组去重
+  uuidArray = unique(uuidArray)
+
+  if (uuidArray.length === 0) {
+    return res
+  }
+
+  // 调用接口查询数据，返回对象
+  await service({
+    url: '/user/batchQuery',
+    method: 'post',
+    data: {
+      'uuid': uuidArray
+    }
+  }).then((apiRes) => {
+    if (apiRes.code !== 0) {
+      console.log('批量查询用户数据失败！', apiRes)
+      throw new Error(apiRes.msg)
+    }
+
+    if (apiRes.data) {
+      for (var i = 0, len = apiRes.data.length; i < len; i++) {
+        res.set(apiRes.data[i].uuid, apiRes.data[i])
+      }
+    }
+  })
+
+  return res
+}
+
+export const batchGetUserInfoByEmail = async(emailArray) => {
+  const res = new Map() // 存储结果
+
+  // 数组去重
+  emailArray = unique(emailArray)
+
+  if (emailArray.length === 0) {
+    return res
+  }
+
+  // 调用接口查询数据，返回对象
+  await service({
+    url: '/user/batchQuery',
+    method: 'post',
+    data: {
+      'email': emailArray
+    },
+    donNotShowLoading: true,
+  }).then((apiRes) => {
+    if (apiRes.code !== 0) {
+      console.log('批量查询用户数据失败！', apiRes)
+      throw new Error(apiRes.msg)
+    }
+
+    if (apiRes.data) {
+      for (var i = 0, len = apiRes.data.length; i < len; i++) {
+        res.set(apiRes.data[i].email, apiRes.data[i])
+      }
+    }
+  })
+
+  return res
+}
+

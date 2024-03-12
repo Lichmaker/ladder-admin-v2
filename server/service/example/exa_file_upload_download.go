@@ -92,17 +92,17 @@ func (e *FileUploadAndDownloadService) UploadFile(header *multipart.FileHeader, 
 	oss := upload.NewOss()
 	filePath, key, uploadErr := oss.UploadFile(header)
 	if uploadErr != nil {
-		panic(err)
+		panic(uploadErr)
+	}
+	s := strings.Split(header.Filename, ".")
+	f := example.ExaFileUploadAndDownload{
+		Url:  filePath,
+		Name: header.Filename,
+		Tag:  s[len(s)-1],
+		Key:  key,
 	}
 	if noSave == "0" {
-		s := strings.Split(header.Filename, ".")
-		f := example.ExaFileUploadAndDownload{
-			Url:  filePath,
-			Name: header.Filename,
-			Tag:  s[len(s)-1],
-			Key:  key,
-		}
 		return f, e.Upload(f)
 	}
-	return
+	return f, nil
 }

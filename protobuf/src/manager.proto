@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+package v2ray.manager;
+
+option go_package = "/manager";
+
+import "google/protobuf/empty.proto";
+import "app/stats/command/command.proto";
+
+service ServeService {
+  rpc SetNode(SetNodeRequest) returns (google.protobuf.Empty);
+  rpc AddNode(AddNodeRequest) returns (google.protobuf.Empty);
+  rpc DeleteNode(DeleteNodeRequest) returns (google.protobuf.Empty);
+  rpc SetUser(SetUserRequest) returns (google.protobuf.Empty);
+  rpc AddUser(AddUserRequest) returns (google.protobuf.Empty);
+  rpc DeleteUser(DeleteUserRequest) returns (google.protobuf.Empty);
+
+  rpc SysStat(SysStatRequest)
+      returns (v2ray.core.app.stats.command.SysStatsResponse);
+  rpc QueryStats(QueryStatsRequest)
+      returns (v2ray.core.app.stats.command.QueryStatsResponse);
+}
+
+message SingleNodeInfo {
+  string ID = 1;
+  string Name = 2;
+  string Host = 3;
+  string NodeConfigV4 = 4; // 传入v4版本配置的json string
+  NodeReverseConfig ReverseConfig = 5;
+}
+
+message UserInfo {
+  string ID = 1;
+  uint32 alterID = 2;
+  string email = 3;
+  uint32 level = 4;
+}
+
+message NodeReverseConfig {
+  int64 VMessPort = 1;
+  int64 RPCPort = 2;
+  string RPCSecret = 3;
+}
+
+message SetNodeRequest { repeated SingleNodeInfo NodeInfoArr = 1; }
+
+message AddNodeRequest { SingleNodeInfo nodeInfo = 1; }
+
+message DeleteNodeRequest { string ID = 1; }
+
+message SetUserRequest {
+  string nodeID = 1;
+  repeated UserInfo users = 2;
+}
+
+message AddUserRequest {
+  string nodeID = 1;
+  UserInfo user = 2;
+}
+
+message DeleteUserRequest {
+  string nodeID = 1;
+  string email = 2;
+}
+
+message SysStatRequest { string nodeID = 1; }
+
+message QueryStatsRequest {
+  string nodeID = 1;
+  v2ray.core.app.stats.command.QueryStatsRequest condition = 2;
+}

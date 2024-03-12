@@ -3,7 +3,15 @@
     <warning-bar title="注：右上角头像下拉可切换角色" />
     <div class="gva-table-box">
       <div class="gva-btn-list">
-        <el-button size="small" type="primary" icon="plus" @click="addAuthority(0)">新增角色</el-button>
+        <el-button
+          type="primary"
+          icon="plus"
+          @click="addAuthority(0)"
+        >新增角色</el-button>
+        <el-icon
+          class="cursor-pointer"
+          @click="toDoc('https://www.bilibili.com/video/BV1kv4y1g7nT?p=8&vd_source=f2640257c21e3b547a790461ed94875e')"
+        ><VideoCameraFilled /></el-icon>
       </div>
       <el-table
         :data="tableData"
@@ -11,41 +19,54 @@
         row-key="authorityId"
         style="width: 100%"
       >
-        <el-table-column label="角色ID" min-width="180" prop="authorityId" />
-        <el-table-column align="left" label="角色名称" min-width="180" prop="authorityName" />
-        <el-table-column align="left" label="操作" width="460">
+        <el-table-column
+          label="角色ID"
+          min-width="180"
+          prop="authorityId"
+        />
+        <el-table-column
+          align="left"
+          label="角色名称"
+          min-width="180"
+          prop="authorityName"
+        />
+        <el-table-column
+          align="left"
+          label="操作"
+          width="460"
+        >
           <template #default="scope">
             <el-button
               icon="setting"
-              size="small"
+
               type="primary"
               link
               @click="opdendrawer(scope.row)"
             >设置权限</el-button>
             <el-button
               icon="plus"
-              size="small"
+
               type="primary"
               link
               @click="addAuthority(scope.row.authorityId)"
             >新增子角色</el-button>
             <el-button
               icon="copy-document"
-              size="small"
+
               type="primary"
               link
               @click="copyAuthorityFunc(scope.row)"
             >拷贝</el-button>
             <el-button
               icon="edit"
-              size="small"
+
               type="primary"
               link
               @click="editAuthority(scope.row)"
             >编辑</el-button>
             <el-button
               icon="delete"
-              size="small"
+
               type="primary"
               link
               @click="deleteAuth(scope.row)"
@@ -55,44 +76,95 @@
       </el-table>
     </div>
     <!-- 新增角色弹窗 -->
-    <el-dialog v-model="dialogFormVisible" :title="dialogTitle">
-      <el-form ref="authorityForm" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="父级角色" prop="parentId">
+    <el-dialog
+      v-model="dialogFormVisible"
+      :title="dialogTitle"
+    >
+      <el-form
+        ref="authorityForm"
+        :model="form"
+        :rules="rules"
+        label-width="80px"
+      >
+        <el-form-item
+          label="父级角色"
+          prop="parentId"
+        >
           <el-cascader
             v-model="form.parentId"
             style="width:100%"
-            :disabled="dialogType=='add'"
+            :disabled="dialogType==='add'"
             :options="AuthorityOption"
             :props="{ checkStrictly: true,label:'authorityName',value:'authorityId',disabled:'disabled',emitPath:false}"
             :show-all-levels="false"
             filterable
           />
         </el-form-item>
-        <el-form-item label="角色ID" prop="authorityId">
-          <el-input v-model="form.authorityId" :disabled="dialogType=='edit'" autocomplete="off" />
+        <el-form-item
+          label="角色ID"
+          prop="authorityId"
+        >
+          <el-input
+            v-model="form.authorityId"
+            :disabled="dialogType==='edit'"
+            autocomplete="off"
+            maxlength="15"
+          />
         </el-form-item>
-        <el-form-item label="角色姓名" prop="authorityName">
-          <el-input v-model="form.authorityName" autocomplete="off" />
+        <el-form-item
+          label="角色姓名"
+          prop="authorityName"
+        >
+          <el-input
+            v-model="form.authorityName"
+            autocomplete="off"
+          />
         </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button size="small" @click="closeDialog">取 消</el-button>
-          <el-button size="small" type="primary" @click="enterDialog">确 定</el-button>
+          <el-button @click="closeDialog">取 消</el-button>
+          <el-button
+            type="primary"
+            @click="enterDialog"
+          >确 定</el-button>
         </div>
       </template>
     </el-dialog>
 
-    <el-drawer v-if="drawer" v-model="drawer" custom-class="auth-drawer" :with-header="false" size="40%" title="角色配置">
-      <el-tabs :before-leave="autoEnter" type="border-card">
+    <el-drawer
+      v-if="drawer"
+      v-model="drawer"
+      custom-class="auth-drawer"
+      :with-header="false"
+      size="40%"
+      title="角色配置"
+    >
+      <el-tabs
+        :before-leave="autoEnter"
+        type="border-card"
+      >
         <el-tab-pane label="角色菜单">
-          <Menus ref="menus" :row="activeRow" @changeRow="changeRow" />
+          <Menus
+            ref="menus"
+            :row="activeRow"
+            @changeRow="changeRow"
+          />
         </el-tab-pane>
         <el-tab-pane label="角色api">
-          <Apis ref="apis" :row="activeRow" @changeRow="changeRow" />
+          <Apis
+            ref="apis"
+            :row="activeRow"
+            @changeRow="changeRow"
+          />
         </el-tab-pane>
         <el-tab-pane label="资源权限">
-          <Datas ref="datas" :authority="tableData" :row="activeRow" @changeRow="changeRow" />
+          <Datas
+            ref="datas"
+            :authority="tableData"
+            :row="activeRow"
+            @changeRow="changeRow"
+          />
         </el-tab-pane>
       </el-tabs>
     </el-drawer>
@@ -115,6 +187,12 @@ import WarningBar from '@/components/warningBar/warningBar.vue'
 
 import { ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { toDoc } from '@/utils/doc'
+import { VideoCameraFilled } from '@element-plus/icons-vue'
+
+defineOptions({
+  name: 'Authority'
+})
 
 const mustUint = (rule, value, callback) => {
   if (!/^[0-9]*[1-9][0-9]*$/.test(value)) {
@@ -253,16 +331,9 @@ const closeDialog = () => {
 // 确定弹窗
 
 const enterDialog = () => {
-  form.value.authorityId = Number(form.value.authorityId)
-  if (form.value.authorityId === 0) {
-    ElMessage({
-      type: 'error',
-      message: '角色id不能为0'
-    })
-    return false
-  }
   authorityForm.value.validate(async valid => {
     if (valid) {
+      form.value.authorityId = Number(form.value.authorityId)
       switch (dialogType.value) {
         case 'add':
           {
@@ -380,13 +451,6 @@ const editAuthority = (row) => {
 
 </script>
 
-<script>
-
-export default {
-  name: 'Authority'
-}
-</script>
-
 <style lang="scss">
 .authority {
   .el-input-number {
@@ -397,14 +461,9 @@ export default {
   }
 }
 .tree-content{
-  overflow: auto;
-  height: calc(100vh - 100px);
   margin-top: 10px;
+  height: calc(100vh - 158px);
+  overflow: auto;
 }
 
-.auth-drawer{
-  .el-drawer__body{
-    overflow: hidden;
-  }
-}
 </style>
