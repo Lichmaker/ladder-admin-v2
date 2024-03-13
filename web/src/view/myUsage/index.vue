@@ -115,13 +115,13 @@
               :duration="20"
             /></template>
         </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           align="left"
           label="操作"
           min-width="120"
         >
           <template #default="scope">
-            <!-- <el-button
+            <el-button
                 type="primary"
                 link
                 class="table-button"
@@ -129,7 +129,7 @@
               >
                 <el-icon style="margin-right: 5px"><InfoFilled /></el-icon>
                 查看详情
-              </el-button> -->
+              </el-button>
             <el-button
               type="primary"
               link
@@ -144,7 +144,7 @@
               @click="deleteRow(scope.row)"
             >删除</el-button>
           </template>
-        </el-table-column>
+        </el-table-column> -->
       </el-table>
       <div class="gva-pagination">
         <el-pagination
