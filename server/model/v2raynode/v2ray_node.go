@@ -44,7 +44,6 @@ func (v V2rayNode) GetSecret() (string, error) {
 		return v.Secret, nil
 	}
 	d, err := utils.AESDecrypt(global.GVA_CONFIG.V2RayManager.SecretKey, v.SecretIv, v.Secret)
-	global.GVA_LOG.Debug("secret", zap.String("d", d), zap.Any("raw", v))
 	return d, err
 }
 
