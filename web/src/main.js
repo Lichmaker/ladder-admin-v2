@@ -15,13 +15,8 @@ import { store } from '@/pinia'
 import App from './App.vue'
 import { initDom } from './utils/positionToCode'
 
-// import dayjs from 'dayjs'
-// // import { utc as dayjsUTC } from 'dayjs/plugin/utc'
-// // import { timezone as dayjsTimezone } from 'dayjs/plugin/timezone'
-// const dayjsUTC = require('dayjs/plugin/utc')
-// const dayjsTZ = require('dayjs/plugin/timezone')
-// dayjs.extend(dayjsUTC)
-// dayjs.extend(dayjsTZ)
+import * as ElementPlusIconsVue from '@element-plus/icons-vue' // 引入所有图标
+
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc' // 导入时区插件
 import timezone from 'dayjs/plugin/timezone' // 导入时区插件
@@ -56,5 +51,10 @@ app
 
 // app.config.globalProperties.$dayjs = dayjs
 app.provide('$dayjs', dayjs)
+
+// 加载所有图标
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+  app.component(key, component)
+}
 
 export default app

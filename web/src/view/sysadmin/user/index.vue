@@ -34,7 +34,7 @@
         <el-table-column
           align="left"
           label="用户名"
-          min-width="200"
+          min-width="270"
           prop="userName"
         />
         <!-- <el-table-column
@@ -46,7 +46,7 @@
         <el-table-column
           align="left"
           label="邮箱"
-          min-width="250"
+          min-width="270"
           prop="email"
         >
           <template #default="{ row }">
@@ -93,6 +93,7 @@
         <el-table-column
           align="left"
           label="用量"
+          min-width="90"
         >
           <template #default="scope">
             {{ scope.row.userExt.standardData }} MB
