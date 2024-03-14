@@ -11,7 +11,12 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
 	systemReq "github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
 	systemRes "github.com/flipped-aurora/gin-vue-admin/server/model/system/response"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/userDataUsageModel"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/userext"
 	"github.com/flipped-aurora/gin-vue-admin/server/utils"
+	"github.com/golang-module/carbon/v2"
+	"github.com/pkg/errors"
+	"gorm.io/gorm"
 
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
@@ -481,4 +486,130 @@ func (b *BaseApi) BatchQuery(c *gin.Context) {
 	}
 
 	response.OkWithData(query, c)
+}
+
+func (b *BaseApi) RegisterWithInviteCode(c *gin.Context) {
+	var l systemReq.RegisterWithInviteCodeReq
+	err := c.ShouldBindJSON(&l)
+	key := c.ClientIP()
+
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	err = utils.Verify(l, utils.RegisterWithInviteCodeVerify)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	// 判断验证码是否开启
+	openCaptcha := global.GVA_CONFIG.Captcha.OpenCaptcha               // 是否开启防爆次数
+	openCaptchaTimeOut := global.GVA_CONFIG.Captcha.OpenCaptchaTimeOut // 缓存超时时间
+	v, ok := global.BlackCache.Get(key)
+	if !ok {
+		global.BlackCache.Set(key, 1, time.Second*time.Duration(openCaptchaTimeOut))
+	}
+
+	var oc bool = openCaptcha == 0 || openCaptcha < interfaceToInt(v)
+
+	if !oc || (l.CaptchaId != "" && l.Captcha != "" && store.Verify(l.CaptchaId, l.Captcha, true)) {
+		// 尝试锁定邀请码
+		lockSuccess, err := inviteCodeService.LockInviteCode(l.InviteCode)
+		if err != nil {
+			response.FailWithMessage(err.Error(), c)
+			return
+		}
+		if !lockSuccess {
+			response.FailWithMessage("该邀请码已被锁定，请稍后重试", c)
+			return
+		}
+		codeInfo, err := inviteCodeService.GetByCode(l.InviteCode)
+		if err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				response.FailWithMessage("邀请码不存在或已被使用", c)
+				return
+			} else {
+				response.FailWithMessage(err.Error(), c)
+				return
+			}
+		}
+		if len(codeInfo.NewUuid) > 0 {
+			response.FailWithMessage("邀请码不存在或已被使用", c)
+			return
+		}
+
+		global.GVA_LOG.Info("新用户通过邀请码注册", zap.String("register", utils.JsonMarshal(l, true)))
+
+		authorityList, _, err := authorityService.GetAuthorityInfoList(request.PageInfo{Page: 1, PageSize: -1})
+		if err != nil {
+			response.FailWithMessage(err.Error(), c)
+			return
+		}
+		var authorities []system.SysAuthority
+		var authorityId uint
+		for _, v := range authorityList.([]system.SysAuthority) {
+			if v.AuthorityName == "用户" {
+				authorities = append(authorities, system.SysAuthority{
+					AuthorityId: v.AuthorityId,
+				})
+				authorityId = v.AuthorityId
+				break
+			}
+		}
+
+		validStartTime := carbon.Now().ToStdTime()
+		validEndTime := carbon.Now().AddYears(3).ToStdTime()
+		user := &system.SysUser{
+			Username:    l.Email,
+			NickName:    l.Email,
+			Password:    l.Password,
+			HeaderImg:   "",
+			AuthorityId: authorityId,
+			Authorities: authorities,
+			Enable:      1, // 账号默认启用
+			Phone:       "",
+			Email:       l.Email,
+			UserExt: userext.UserExt{
+				ValidStart:   &validStartTime,
+				ValidEnd:     &validEndTime,
+				StandardData: 1024,
+				Enable:       0,
+			},
+		}
+		userReturn, err := userService.Register(*user)
+		if err != nil {
+			inviteCodeService.UnlockInviteCode(l.InviteCode)
+			global.GVA_LOG.Error("注册失败!", zap.Error(err))
+			response.FailWithMessage(err.Error(), c)
+			return
+		}
+		global.GVA_LOG.Info("使用邀请码注册成功", zap.String("body", utils.JsonMarshal(userReturn, true)))
+
+		// 更新邀请码数据
+		codeInfo.NewUuid = userReturn.UUID.String()
+		if err := inviteCodeService.UpdateInviteCode(codeInfo); err != nil {
+			global.GVA_LOG.Error("邀请码信息更新失败!", zap.Error(err))
+		}
+
+		if codeInfo.FreeData != nil && *codeInfo.FreeData > 0 && codeInfo.FreeDays != nil && *codeInfo.FreeDays > 0 {
+			now := carbon.Now().ToStdTime()
+			endDate := carbon.Now().AddDays(*codeInfo.FreeDays).ToStdTime()
+
+			var userDataUsage userDataUsageModel.UserDataUsage
+			userDataUsage.UserUuid = userReturn.UUID.String()
+			userDataUsage.StartDate = &now
+			userDataUsage.EndDate = &endDate
+			userDataUsage.StandardData = *codeInfo.FreeData
+			if err := userDataUsageService.CreateUserDataUsage(&userDataUsage); err != nil {
+				global.GVA_LOG.Error("邀请码注册成功后写入流量包失败!", zap.Error(err))
+			}
+		}
+
+		response.OkWithDetailed(userReturn, "注册成功", c)
+		return
+	}
+	// 验证码次数+1
+	global.BlackCache.Increment(key, 1)
+	response.FailWithMessage("验证码错误", c)
 }

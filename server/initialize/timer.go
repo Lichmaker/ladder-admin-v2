@@ -63,9 +63,9 @@ func Timer() {
 			global.GVA_LOG.Error("add timer error:", zap.Error(err))
 		}
 
-		// 每5分钟，重置所有节点的用户
+		// 每30分钟，重置所有节点的用户
 		_, err = global.GVA_Timer.AddTaskByFunc("NodeDataStat",
-			"43 */5 * * * *",
+			"43 2,32 * * * *",
 			usercheck.ReloadUser,
 			"定时重置所有节点的用户", option...)
 		if err != nil {

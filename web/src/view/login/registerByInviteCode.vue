@@ -14,32 +14,43 @@
             <div class="flex items-center justify-center">
 
               <!-- <img
-                class="w-24"
-                :src="$GIN_VUE_ADMIN.appLogo"
-                alt
-              > -->
+                  class="w-24"
+                  :src="$GIN_VUE_ADMIN.appLogo"
+                  alt
+                > -->
             </div>
             <div class="mb-9">
               <p class="text-center text-4xl font-bold">{{ $GIN_VUE_ADMIN.appName }}</p>
               <p class="text-center text-sm font-normal text-gray-500 mt-2.5">
-                若无法登录请使用注册邮箱联系 lich.wu2014@gmail.com
+                若无法注册可联系 lich.wu2014@gmail.com
               </p>
             </div>
             <el-form
               ref="loginForm"
-              :model="loginFormData"
+              :model="registerFormData"
               :rules="rules"
               :validate-on-rule-change="false"
               @keyup.enter="submitForm"
             >
               <el-form-item
-                prop="username"
+                prop="inviteCode"
                 class="mb-6"
               >
                 <el-input
-                  v-model="loginFormData.username"
+                  v-model="registerFormData.inviteCode"
                   size="large"
-                  placeholder="请输入用户名"
+                  placeholder="请输入邀请码"
+                />
+              </el-form-item>
+              <el-form-item
+                prop="email"
+                class="mb-6"
+              >
+
+                <el-input
+                  v-model="registerFormData.email"
+                  size="large"
+                  placeholder="请输入邮箱"
                   suffix-icon="user"
                 />
               </el-form-item>
@@ -48,7 +59,7 @@
                 class="mb-6"
               >
                 <el-input
-                  v-model="loginFormData.password"
+                  v-model="registerFormData.password"
                   show-password
                   size="large"
                   type="password"
@@ -56,13 +67,25 @@
                 />
               </el-form-item>
               <el-form-item
-                v-if="loginFormData.openCaptcha"
+                prop="passwordConfirm"
+                class="mb-6"
+              >
+                <el-input
+                  v-model="registerFormData.passwordConfirm"
+                  show-password
+                  size="large"
+                  type="password"
+                  placeholder="请再次输入密码"
+                />
+              </el-form-item>
+              <el-form-item
+                v-if="registerFormData.openCaptcha"
                 prop="captcha"
                 class="mb-6"
               >
                 <div class="flex w-full justify-between">
                   <el-input
-                    v-model="loginFormData.captcha"
+                    v-model="registerFormData.captcha"
                     placeholder="请输入验证码"
                     size="large"
                     class="flex-1 mr-5"
@@ -84,15 +107,15 @@
                   type="primary"
                   size="large"
                   @click="submitForm"
-                >登 录</el-button>
+                >注 册</el-button>
               </el-form-item>
               <el-form-item class="mb-6">
                 <el-button
                   class="shadow shadow-blue-600 h-11 w-full"
                   type="primary"
                   size="large"
-                  @click="toRegister"
-                >注 册</el-button>
+                  @click="toLogin()"
+                >返回登陆</el-button>
               </el-form-item>
               <el-form-item
                 v-if="showInit"
@@ -111,55 +134,55 @@
         </div>
       </div>
       <!-- <div class="hidden md:block w-1/2 h-full float-right bg-[#194bfb]"><img
-        class="h-full"
-        src="@/assets/login_right_banner.jpg"
-        alt="banner"
-      ></div> -->
+          class="h-full"
+          src="@/assets/login_right_banner.jpg"
+          alt="banner"
+        ></div> -->
     </div>
 
     <BottomInfo class="left-0 right-0 absolute bottom-3 mx-auto  w-full z-20">
       <!-- <div class="links items-center justify-center gap-2 hidden md:flex">
-        <a
-          href="http://doc.henrongyi.top/"
-          target="_blank"
-        >
-          <img
-            src="@/assets/docs.png"
-            class="w-8 h-8"
-            alt="文档"
+          <a
+            href="http://doc.henrongyi.top/"
+            target="_blank"
           >
-        </a>
-        <a
-          href="https://support.qq.com/product/371961"
-          target="_blank"
-        >
-          <img
-            src="@/assets/kefu.png"
-            class="w-8 h-8"
-            alt="客服"
+            <img
+              src="@/assets/docs.png"
+              class="w-8 h-8"
+              alt="文档"
+            >
+          </a>
+          <a
+            href="https://support.qq.com/product/371961"
+            target="_blank"
           >
-        </a>
-        <a
-          href="https://github.com/flipped-aurora/gin-vue-admin"
-          target="_blank"
-        >
-          <img
-            src="@/assets/github.png"
-            class="w-8 h-8"
-            alt="github"
+            <img
+              src="@/assets/kefu.png"
+              class="w-8 h-8"
+              alt="客服"
+            >
+          </a>
+          <a
+            href="https://github.com/flipped-aurora/gin-vue-admin"
+            target="_blank"
           >
-        </a>
-        <a
-          href="https://space.bilibili.com/322210472"
-          target="_blank"
-        >
-          <img
-            src="@/assets/video.png"
-            class="w-8 h-8"
-            alt="视频站"
+            <img
+              src="@/assets/github.png"
+              class="w-8 h-8"
+              alt="github"
+            >
+          </a>
+          <a
+            href="https://space.bilibili.com/322210472"
+            target="_blank"
           >
-        </a>
-      </div> -->
+            <img
+              src="@/assets/video.png"
+              class="w-8 h-8"
+              alt="视频站"
+            >
+          </a>
+        </div> -->
     </BottomInfo>
   </div>
 </template>
@@ -172,6 +195,7 @@ import { reactive, ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/pinia/modules/user'
+import { registerWithInviteCode } from '@/api/user'
 
 defineOptions({
   name: 'Login',
@@ -180,13 +204,13 @@ defineOptions({
 const router = useRouter()
 const route = useRoute()
 // 验证函数
-const checkUsername = (rule, value, callback) => {
-  if (value.length < 5) {
-    return callback(new Error('请输入正确的用户名'))
-  } else {
-    callback()
-  }
-}
+// const checkUsername = (rule, value, callback) => {
+//   if (value.length < 5) {
+//     return callback(new Error('请输入正确的用户名'))
+//   } else {
+//     callback()
+//   }
+// }
 const checkPassword = (rule, value, callback) => {
   if (value.length < 6) {
     return callback(new Error('请输入正确的密码'))
@@ -194,10 +218,27 @@ const checkPassword = (rule, value, callback) => {
     callback()
   }
 }
+const checkPasswordConfirm = (rule, value, callback) => {
+  if (value.length < 6) {
+    return callback(new Error('请输入正确的密码'))
+  }
+  if (value !== registerFormData.password) {
+    return callback(new Error('两次输入的密码不一致'))
+  }
+
+  callback()
+}
+const checkInviteCode = (rule, value, callback) => {
+  if (value.length < 8) {
+    return callback(new Error('请输入正确的邀请码'))
+  } else {
+    callback()
+  }
+}
 
 onMounted(() => {
-  if (route.query.username) {
-    loginFormData.username = route.query.username
+  if (route.query.inviteCode) {
+    registerFormData.inviteCode = route.query.inviteCode
   }
 
   checkShowInit()
@@ -213,8 +254,8 @@ const loginVerify = () => {
       trigger: 'blur',
     })
     picPath.value = ele.data.picPath
-    loginFormData.captchaId = ele.data.captchaId
-    loginFormData.openCaptcha = ele.data.openCaptcha
+    registerFormData.captchaId = ele.data.captchaId
+    registerFormData.openCaptcha = ele.data.openCaptcha
   })
 }
 loginVerify()
@@ -222,16 +263,22 @@ loginVerify()
 // 登录相关操作
 const loginForm = ref(null)
 const picPath = ref('')
-const loginFormData = reactive({
-  username: '',
+const registerFormData = reactive({
+  email: '',
+  inviteCode: '',
   password: '',
+  passwordConfirm: '',
   captcha: '',
   captchaId: '',
   openCaptcha: false,
 })
 const rules = reactive({
-  username: [{ validator: checkUsername, trigger: 'blur' }],
+  email: [
+    { required: true, pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, message: '请输入正确的邮箱', trigger: 'blur' },
+  ],
+  inviteCode: [{ validator: checkInviteCode, trigger: 'blur' }],
   password: [{ validator: checkPassword, trigger: 'blur' }],
+  passwordConfirm: [{ validator: checkPasswordConfirm, trigger: 'blur' }],
   captcha: [
     {
       message: '验证码格式不正确',
@@ -242,15 +289,23 @@ const rules = reactive({
 const showInit = ref(false)
 
 const userStore = useUserStore()
-const login = async() => {
-  return await userStore.LoginIn(loginFormData)
+const register = async() => {
+  return await registerWithInviteCode(registerFormData)
 }
 const submitForm = () => {
   loginForm.value.validate(async(v) => {
     if (v) {
-      const flag = await login()
-      if (!flag) {
+      const res = await register()
+      if (res.code !== 0) {
         loginVerify()
+      } else {
+        ElMessage({
+          type: 'success',
+          message: '注册成功',
+        })
+        toLogin({
+          username: registerFormData.email,
+        })
       }
     } else {
       ElMessage({
@@ -280,8 +335,8 @@ const checkInit = async() => {
   }
 }
 
-const toRegister = () => {
-  router.push({ name: 'Register' })
+const toLogin = (query) => {
+  router.push({ name: 'Login', query })
 }
 
 const checkShowInit = async() => {
@@ -294,3 +349,4 @@ const checkShowInit = async() => {
 }
 
 </script>
+

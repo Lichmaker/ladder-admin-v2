@@ -182,7 +182,8 @@ export const batchGetUserInfoByUUID = async(uuidArray) => {
     method: 'post',
     data: {
       'uuid': uuidArray
-    }
+    },
+    donNotShowLoading: true,
   }).then((apiRes) => {
     if (apiRes.code !== 0) {
       console.log('批量查询用户数据失败！', apiRes)
@@ -231,5 +232,14 @@ export const batchGetUserInfoByEmail = async(emailArray) => {
   })
 
   return res
+}
+
+export const registerWithInviteCode = (data) => {
+//   console.log(data.value)
+  return service({
+    url: '/base/registerWithInviteCode',
+    method: 'post',
+    data: data
+  })
 }
 

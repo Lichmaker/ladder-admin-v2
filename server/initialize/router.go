@@ -103,6 +103,10 @@ func Routers() *gin.Engine {
 		v2raynodeRouter.InitV2rayNodeRouter(PrivateGroup)
 		v2raynodeRouter.InitPublicRouter(PublicGroup)
 	}
+	{
+		invitecodeRouter := router.RouterGroupApp.Invitecode
+		invitecodeRouter.InitInviteCodeRouter(PrivateGroup)
+	}
 
 	global.GVA_LOG.Info("router register success")
 	return Router

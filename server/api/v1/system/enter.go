@@ -36,4 +36,6 @@ var (
 	autoCodeHistoryService  = service.ServiceGroupApp.SystemServiceGroup.AutoCodeHistoryService
 	dictionaryDetailService = service.ServiceGroupApp.SystemServiceGroup.DictionaryDetailService
 	authorityBtnService     = service.ServiceGroupApp.SystemServiceGroup.AuthorityBtnService
+	inviteCodeService       = service.ServiceGroupApp.InvitecodeServiceGroup.InviteCodeService
+	userDataUsageService    = service.ServiceGroupApp.UserDataUsageModelServiceGroup.UserDataUsageService
 )

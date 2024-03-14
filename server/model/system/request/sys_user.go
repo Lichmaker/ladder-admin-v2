@@ -59,3 +59,12 @@ type BatchQueryUser struct {
 	UUID  []string `json:"uuid"`
 	Email []string `json:"email"`
 }
+
+type RegisterWithInviteCodeReq struct {
+	Email           string `json:"email"`           // 用户名
+	Password        string `json:"password"`        // 密码
+	InviteCode      string `json:"inviteCode"`      // 密码
+	PasswordConfirm string `json:"passwordConfirm"` // 密码
+	Captcha         string `json:"captcha"`         // 验证码
+	CaptchaId       string `json:"captchaId"`       // 验证码ID
+}
