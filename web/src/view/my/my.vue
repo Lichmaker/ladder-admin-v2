@@ -62,7 +62,7 @@
       class="qrcode-card"
     >
       <el-descriptions
-        title="订阅二维码"
+        title="节点二维码"
         :column="1"
         direction="vertical"
       >
