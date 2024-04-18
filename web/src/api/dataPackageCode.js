@@ -1,96 +1,96 @@
 import service from '@/utils/request'
 
-// @Tags LaDataPackageCode
+// @Tags DataPackageCode
 // @Summary 创建dataPackageCode表
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body model.LaDataPackageCode true "创建dataPackageCode表"
+// @Param data body model.DataPackageCode true "创建dataPackageCode表"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"创建成功"}"
-// @Router /dataPackageCode/createLaDataPackageCode [post]
-export const createLaDataPackageCode = (data) => {
+// @Router /dataPackageCode/createDataPackageCode [post]
+export const createDataPackageCode = (data) => {
   return service({
-    url: '/dataPackageCode/createLaDataPackageCode',
+    url: '/dataPackageCode/createDataPackageCode',
     method: 'post',
     data
   })
 }
 
-// @Tags LaDataPackageCode
+// @Tags DataPackageCode
 // @Summary 删除dataPackageCode表
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body model.LaDataPackageCode true "删除dataPackageCode表"
+// @Param data body model.DataPackageCode true "删除dataPackageCode表"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"删除成功"}"
-// @Router /dataPackageCode/deleteLaDataPackageCode [delete]
-export const deleteLaDataPackageCode = (params) => {
+// @Router /dataPackageCode/deleteDataPackageCode [delete]
+export const deleteDataPackageCode = (params) => {
   return service({
-    url: '/dataPackageCode/deleteLaDataPackageCode',
+    url: '/dataPackageCode/deleteDataPackageCode',
     method: 'delete',
     params
   })
 }
 
-// @Tags LaDataPackageCode
+// @Tags DataPackageCode
 // @Summary 批量删除dataPackageCode表
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
 // @Param data body request.IdsReq true "批量删除dataPackageCode表"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"删除成功"}"
-// @Router /dataPackageCode/deleteLaDataPackageCode [delete]
-export const deleteLaDataPackageCodeByIds = (params) => {
+// @Router /dataPackageCode/deleteDataPackageCode [delete]
+export const deleteDataPackageCodeByIds = (params) => {
   return service({
-    url: '/dataPackageCode/deleteLaDataPackageCodeByIds',
+    url: '/dataPackageCode/deleteDataPackageCodeByIds',
     method: 'delete',
     params
   })
 }
 
-// @Tags LaDataPackageCode
+// @Tags DataPackageCode
 // @Summary 更新dataPackageCode表
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body model.LaDataPackageCode true "更新dataPackageCode表"
+// @Param data body model.DataPackageCode true "更新dataPackageCode表"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"更新成功"}"
-// @Router /dataPackageCode/updateLaDataPackageCode [put]
-export const updateLaDataPackageCode = (data) => {
+// @Router /dataPackageCode/updateDataPackageCode [put]
+export const updateDataPackageCode = (data) => {
   return service({
-    url: '/dataPackageCode/updateLaDataPackageCode',
+    url: '/dataPackageCode/updateDataPackageCode',
     method: 'put',
     data
   })
 }
 
-// @Tags LaDataPackageCode
+// @Tags DataPackageCode
 // @Summary 用id查询dataPackageCode表
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data query model.LaDataPackageCode true "用id查询dataPackageCode表"
+// @Param data query model.DataPackageCode true "用id查询dataPackageCode表"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"查询成功"}"
-// @Router /dataPackageCode/findLaDataPackageCode [get]
-export const findLaDataPackageCode = (params) => {
+// @Router /dataPackageCode/findDataPackageCode [get]
+export const findDataPackageCode = (params) => {
   return service({
-    url: '/dataPackageCode/findLaDataPackageCode',
+    url: '/dataPackageCode/findDataPackageCode',
     method: 'get',
     params
   })
 }
 
-// @Tags LaDataPackageCode
+// @Tags DataPackageCode
 // @Summary 分页获取dataPackageCode表列表
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
 // @Param data query request.PageInfo true "分页获取dataPackageCode表列表"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /dataPackageCode/getLaDataPackageCodeList [get]
-export const getLaDataPackageCodeList = (params) => {
+// @Router /dataPackageCode/getDataPackageCodeList [get]
+export const getDataPackageCodeList = (params) => {
   return service({
-    url: '/dataPackageCode/getLaDataPackageCodeList',
+    url: '/dataPackageCode/getDataPackageCodeList',
     method: 'get',
     params
   })

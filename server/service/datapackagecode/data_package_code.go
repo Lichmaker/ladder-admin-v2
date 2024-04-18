@@ -6,52 +6,52 @@ import (
 	datapackagecodeReq "github.com/flipped-aurora/gin-vue-admin/server/model/datapackagecode/request"
 )
 
-type LaDataPackageCodeService struct {
+type DataPackageCodeService struct {
 }
 
-// CreateLaDataPackageCode 创建dataPackageCode表记录
+// CreateDataPackageCode 创建dataPackageCode表记录
 // Author [piexlmax](https://github.com/piexlmax)
-func (dataPackageCodeService *LaDataPackageCodeService) CreateLaDataPackageCode(dataPackageCode *datapackagecode.LaDataPackageCode) (err error) {
+func (dataPackageCodeService *DataPackageCodeService) CreateDataPackageCode(dataPackageCode *datapackagecode.DataPackageCode) (err error) {
 	err = global.GVA_DB.Create(dataPackageCode).Error
 	return err
 }
 
-// DeleteLaDataPackageCode 删除dataPackageCode表记录
+// DeleteDataPackageCode 删除dataPackageCode表记录
 // Author [piexlmax](https://github.com/piexlmax)
-func (dataPackageCodeService *LaDataPackageCodeService) DeleteLaDataPackageCode(id string) (err error) {
-	err = global.GVA_DB.Delete(&datapackagecode.LaDataPackageCode{}, "id = ?", id).Error
+func (dataPackageCodeService *DataPackageCodeService) DeleteDataPackageCode(id string) (err error) {
+	err = global.GVA_DB.Delete(&datapackagecode.DataPackageCode{}, "id = ?", id).Error
 	return err
 }
 
-// DeleteLaDataPackageCodeByIds 批量删除dataPackageCode表记录
+// DeleteDataPackageCodeByIds 批量删除dataPackageCode表记录
 // Author [piexlmax](https://github.com/piexlmax)
-func (dataPackageCodeService *LaDataPackageCodeService) DeleteLaDataPackageCodeByIds(ids []string) (err error) {
-	err = global.GVA_DB.Delete(&[]datapackagecode.LaDataPackageCode{}, "id in ?", ids).Error
+func (dataPackageCodeService *DataPackageCodeService) DeleteDataPackageCodeByIds(ids []string) (err error) {
+	err = global.GVA_DB.Delete(&[]datapackagecode.DataPackageCode{}, "id in ?", ids).Error
 	return err
 }
 
-// UpdateLaDataPackageCode 更新dataPackageCode表记录
+// UpdateDataPackageCode 更新dataPackageCode表记录
 // Author [piexlmax](https://github.com/piexlmax)
-func (dataPackageCodeService *LaDataPackageCodeService) UpdateLaDataPackageCode(dataPackageCode datapackagecode.LaDataPackageCode) (err error) {
+func (dataPackageCodeService *DataPackageCodeService) UpdateDataPackageCode(dataPackageCode datapackagecode.DataPackageCode) (err error) {
 	err = global.GVA_DB.Save(&dataPackageCode).Error
 	return err
 }
 
-// GetLaDataPackageCode 根据id获取dataPackageCode表记录
+// GetDataPackageCode 根据id获取dataPackageCode表记录
 // Author [piexlmax](https://github.com/piexlmax)
-func (dataPackageCodeService *LaDataPackageCodeService) GetLaDataPackageCode(id string) (dataPackageCode datapackagecode.LaDataPackageCode, err error) {
+func (dataPackageCodeService *DataPackageCodeService) GetDataPackageCode(id string) (dataPackageCode datapackagecode.DataPackageCode, err error) {
 	err = global.GVA_DB.Where("id = ?", id).First(&dataPackageCode).Error
 	return
 }
 
-// GetLaDataPackageCodeInfoList 分页获取dataPackageCode表记录
+// GetDataPackageCodeInfoList 分页获取dataPackageCode表记录
 // Author [piexlmax](https://github.com/piexlmax)
-func (dataPackageCodeService *LaDataPackageCodeService) GetLaDataPackageCodeInfoList(info datapackagecodeReq.LaDataPackageCodeSearch) (list []datapackagecode.LaDataPackageCode, total int64, err error) {
+func (dataPackageCodeService *DataPackageCodeService) GetDataPackageCodeInfoList(info datapackagecodeReq.DataPackageCodeSearch) (list []datapackagecode.DataPackageCode, total int64, err error) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
 	// 创建db
-	db := global.GVA_DB.Model(&datapackagecode.LaDataPackageCode{})
-	var dataPackageCodes []datapackagecode.LaDataPackageCode
+	db := global.GVA_DB.Model(&datapackagecode.DataPackageCode{})
+	var dataPackageCodes []datapackagecode.DataPackageCode
 	// 如果有条件搜索 下方会自动创建搜索语句
 	if info.StartCreatedAt != nil && info.EndCreatedAt != nil {
 		db = db.Where("created_at BETWEEN ? AND ?", info.StartCreatedAt, info.EndCreatedAt)

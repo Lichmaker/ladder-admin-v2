@@ -1,5 +1,5 @@
 package datapackagecode
 
 type RouterGroup struct {
-	LaDataPackageCodeRouter
+	DataPackageCodeRouter
 }

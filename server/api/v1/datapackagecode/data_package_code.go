@@ -10,30 +10,30 @@ import (
     "go.uber.org/zap"
 )
 
-type LaDataPackageCodeApi struct {
+type DataPackageCodeApi struct {
 }
 
-var dataPackageCodeService = service.ServiceGroupApp.DatapackagecodeServiceGroup.LaDataPackageCodeService
+var dataPackageCodeService = service.ServiceGroupApp.DatapackagecodeServiceGroup.DataPackageCodeService
 
 
-// CreateLaDataPackageCode 创建dataPackageCode表
-// @Tags LaDataPackageCode
+// CreateDataPackageCode 创建dataPackageCode表
+// @Tags DataPackageCode
 // @Summary 创建dataPackageCode表
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body datapackagecode.LaDataPackageCode true "创建dataPackageCode表"
+// @Param data body datapackagecode.DataPackageCode true "创建dataPackageCode表"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"创建成功"}"
-// @Router /dataPackageCode/createLaDataPackageCode [post]
-func (dataPackageCodeApi *LaDataPackageCodeApi) CreateLaDataPackageCode(c *gin.Context) {
-	var dataPackageCode datapackagecode.LaDataPackageCode
+// @Router /dataPackageCode/createDataPackageCode [post]
+func (dataPackageCodeApi *DataPackageCodeApi) CreateDataPackageCode(c *gin.Context) {
+	var dataPackageCode datapackagecode.DataPackageCode
 	err := c.ShouldBindJSON(&dataPackageCode)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
 
-	if err := dataPackageCodeService.CreateLaDataPackageCode(&dataPackageCode); err != nil {
+	if err := dataPackageCodeService.CreateDataPackageCode(&dataPackageCode); err != nil {
         global.GVA_LOG.Error("创建失败!", zap.Error(err))
 		response.FailWithMessage("创建失败", c)
 	} else {
@@ -41,18 +41,18 @@ func (dataPackageCodeApi *LaDataPackageCodeApi) CreateLaDataPackageCode(c *gin.C
 	}
 }
 
-// DeleteLaDataPackageCode 删除dataPackageCode表
-// @Tags LaDataPackageCode
+// DeleteDataPackageCode 删除dataPackageCode表
+// @Tags DataPackageCode
 // @Summary 删除dataPackageCode表
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body datapackagecode.LaDataPackageCode true "删除dataPackageCode表"
+// @Param data body datapackagecode.DataPackageCode true "删除dataPackageCode表"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"删除成功"}"
-// @Router /dataPackageCode/deleteLaDataPackageCode [delete]
-func (dataPackageCodeApi *LaDataPackageCodeApi) DeleteLaDataPackageCode(c *gin.Context) {
+// @Router /dataPackageCode/deleteDataPackageCode [delete]
+func (dataPackageCodeApi *DataPackageCodeApi) DeleteDataPackageCode(c *gin.Context) {
 	id := c.Query("ID")
-	if err := dataPackageCodeService.DeleteLaDataPackageCode(id); err != nil {
+	if err := dataPackageCodeService.DeleteDataPackageCode(id); err != nil {
         global.GVA_LOG.Error("删除失败!", zap.Error(err))
 		response.FailWithMessage("删除失败", c)
 	} else {
@@ -60,18 +60,18 @@ func (dataPackageCodeApi *LaDataPackageCodeApi) DeleteLaDataPackageCode(c *gin.C
 	}
 }
 
-// DeleteLaDataPackageCodeByIds 批量删除dataPackageCode表
-// @Tags LaDataPackageCode
+// DeleteDataPackageCodeByIds 批量删除dataPackageCode表
+// @Tags DataPackageCode
 // @Summary 批量删除dataPackageCode表
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
 // @Param data body request.IdsReq true "批量删除dataPackageCode表"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"批量删除成功"}"
-// @Router /dataPackageCode/deleteLaDataPackageCodeByIds [delete]
-func (dataPackageCodeApi *LaDataPackageCodeApi) DeleteLaDataPackageCodeByIds(c *gin.Context) {
+// @Router /dataPackageCode/deleteDataPackageCodeByIds [delete]
+func (dataPackageCodeApi *DataPackageCodeApi) DeleteDataPackageCodeByIds(c *gin.Context) {
 	ids := c.QueryArray("ids[]")
-	if err := dataPackageCodeService.DeleteLaDataPackageCodeByIds(ids); err != nil {
+	if err := dataPackageCodeService.DeleteDataPackageCodeByIds(ids); err != nil {
         global.GVA_LOG.Error("批量删除失败!", zap.Error(err))
 		response.FailWithMessage("批量删除失败", c)
 	} else {
@@ -79,24 +79,24 @@ func (dataPackageCodeApi *LaDataPackageCodeApi) DeleteLaDataPackageCodeByIds(c *
 	}
 }
 
-// UpdateLaDataPackageCode 更新dataPackageCode表
-// @Tags LaDataPackageCode
+// UpdateDataPackageCode 更新dataPackageCode表
+// @Tags DataPackageCode
 // @Summary 更新dataPackageCode表
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body datapackagecode.LaDataPackageCode true "更新dataPackageCode表"
+// @Param data body datapackagecode.DataPackageCode true "更新dataPackageCode表"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"更新成功"}"
-// @Router /dataPackageCode/updateLaDataPackageCode [put]
-func (dataPackageCodeApi *LaDataPackageCodeApi) UpdateLaDataPackageCode(c *gin.Context) {
-	var dataPackageCode datapackagecode.LaDataPackageCode
+// @Router /dataPackageCode/updateDataPackageCode [put]
+func (dataPackageCodeApi *DataPackageCodeApi) UpdateDataPackageCode(c *gin.Context) {
+	var dataPackageCode datapackagecode.DataPackageCode
 	err := c.ShouldBindJSON(&dataPackageCode)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
 
-	if err := dataPackageCodeService.UpdateLaDataPackageCode(dataPackageCode); err != nil {
+	if err := dataPackageCodeService.UpdateDataPackageCode(dataPackageCode); err != nil {
         global.GVA_LOG.Error("更新失败!", zap.Error(err))
 		response.FailWithMessage("更新失败", c)
 	} else {
@@ -104,18 +104,18 @@ func (dataPackageCodeApi *LaDataPackageCodeApi) UpdateLaDataPackageCode(c *gin.C
 	}
 }
 
-// FindLaDataPackageCode 用id查询dataPackageCode表
-// @Tags LaDataPackageCode
+// FindDataPackageCode 用id查询dataPackageCode表
+// @Tags DataPackageCode
 // @Summary 用id查询dataPackageCode表
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data query datapackagecode.LaDataPackageCode true "用id查询dataPackageCode表"
+// @Param data query datapackagecode.DataPackageCode true "用id查询dataPackageCode表"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"查询成功"}"
-// @Router /dataPackageCode/findLaDataPackageCode [get]
-func (dataPackageCodeApi *LaDataPackageCodeApi) FindLaDataPackageCode(c *gin.Context) {
+// @Router /dataPackageCode/findDataPackageCode [get]
+func (dataPackageCodeApi *DataPackageCodeApi) FindDataPackageCode(c *gin.Context) {
 	id := c.Query("ID")
-	if redataPackageCode, err := dataPackageCodeService.GetLaDataPackageCode(id); err != nil {
+	if redataPackageCode, err := dataPackageCodeService.GetDataPackageCode(id); err != nil {
         global.GVA_LOG.Error("查询失败!", zap.Error(err))
 		response.FailWithMessage("查询失败", c)
 	} else {
@@ -123,23 +123,23 @@ func (dataPackageCodeApi *LaDataPackageCodeApi) FindLaDataPackageCode(c *gin.Con
 	}
 }
 
-// GetLaDataPackageCodeList 分页获取dataPackageCode表列表
-// @Tags LaDataPackageCode
+// GetDataPackageCodeList 分页获取dataPackageCode表列表
+// @Tags DataPackageCode
 // @Summary 分页获取dataPackageCode表列表
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data query datapackagecodeReq.LaDataPackageCodeSearch true "分页获取dataPackageCode表列表"
+// @Param data query datapackagecodeReq.DataPackageCodeSearch true "分页获取dataPackageCode表列表"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /dataPackageCode/getLaDataPackageCodeList [get]
-func (dataPackageCodeApi *LaDataPackageCodeApi) GetLaDataPackageCodeList(c *gin.Context) {
-	var pageInfo datapackagecodeReq.LaDataPackageCodeSearch
+// @Router /dataPackageCode/getDataPackageCodeList [get]
+func (dataPackageCodeApi *DataPackageCodeApi) GetDataPackageCodeList(c *gin.Context) {
+	var pageInfo datapackagecodeReq.DataPackageCodeSearch
 	err := c.ShouldBindQuery(&pageInfo)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if list, total, err := dataPackageCodeService.GetLaDataPackageCodeInfoList(pageInfo); err != nil {
+	if list, total, err := dataPackageCodeService.GetDataPackageCodeInfoList(pageInfo); err != nil {
 	    global.GVA_LOG.Error("获取失败!", zap.Error(err))
         response.FailWithMessage("获取失败", c)
     } else {

@@ -8,7 +8,7 @@ import (
 )
 
 // dataPackageCode表 结构体  LaDataPackageCode
-type LaDataPackageCode struct {
+type DataPackageCode struct {
 	global.GVA_MODEL
 	UniqueCode   string     `json:"uniqueCode" form:"uniqueCode" gorm:"column:unique_code;comment:;size:64;" binding:"required"`       //唯一编号
 	StandardData *int       `json:"standardData" form:"standardData" gorm:"column:standard_data;comment:;size:10;" binding:"required"` //基础流量(MB)
@@ -20,6 +20,6 @@ type LaDataPackageCode struct {
 }
 
 // TableName dataPackageCode表 LaDataPackageCode自定义表名 la_data_package_code
-func (LaDataPackageCode) TableName() string {
+func (DataPackageCode) TableName() string {
 	return "la_data_package_code"
 }

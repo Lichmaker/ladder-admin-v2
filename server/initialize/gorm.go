@@ -60,7 +60,7 @@ func RegisterTables() {
 		example.ExaFileUploadAndDownload{},
 		datastatisticsmodel.DataStatistics{},
 		userext.UserExt{},
-		userDataUsageModel.UserDataUsage{}, announcementModel.Announcement{}, v2raynode.V2rayNode{}, invitecode.InviteCode{}, datapackagecode.LaDataPackageCode{},
+		userDataUsageModel.UserDataUsage{}, announcementModel.Announcement{}, v2raynode.V2rayNode{}, invitecode.InviteCode{}, datapackagecode.DataPackageCode{},
 	)
 	if err != nil {
 		global.GVA_LOG.Error("register table failed", zap.Error(err))
