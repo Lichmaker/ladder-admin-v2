@@ -15,6 +15,7 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/model/announcementModel"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/v2raynode"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/invitecode"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/datapackagecode"
 )
 
 func Gorm() *gorm.DB {
@@ -59,7 +60,7 @@ func RegisterTables() {
 		example.ExaFileUploadAndDownload{},
 		datastatisticsmodel.DataStatistics{},
 		userext.UserExt{},
-		userDataUsageModel.UserDataUsage{}, announcementModel.Announcement{}, v2raynode.V2rayNode{}, invitecode.InviteCode{},
+		userDataUsageModel.UserDataUsage{}, announcementModel.Announcement{}, v2raynode.V2rayNode{}, invitecode.InviteCode{}, datapackagecode.LaDataPackageCode{},
 	)
 	if err != nil {
 		global.GVA_LOG.Error("register table failed", zap.Error(err))

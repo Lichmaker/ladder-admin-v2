@@ -2,6 +2,7 @@ package v1
 
 import (
 	"github.com/flipped-aurora/gin-vue-admin/server/api/v1/announcementModel"
+	"github.com/flipped-aurora/gin-vue-admin/server/api/v1/datapackagecode"
 	"github.com/flipped-aurora/gin-vue-admin/server/api/v1/datastatisticsmodel"
 	"github.com/flipped-aurora/gin-vue-admin/server/api/v1/example"
 	"github.com/flipped-aurora/gin-vue-admin/server/api/v1/invitecode"
@@ -20,6 +21,7 @@ type ApiGroup struct {
 	AnnouncementModelApiGroup   announcementModel.ApiGroup
 	V2raynodeApiGroup           v2raynode.ApiGroup
 	InvitecodeApiGroup          invitecode.ApiGroup
+	DatapackagecodeApiGroup     datapackagecode.ApiGroup
 }
 
 var ApiGroupApp = new(ApiGroup)

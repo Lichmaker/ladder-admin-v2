@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/flipped-aurora/gin-vue-admin/server/service/announcementModel"
+	"github.com/flipped-aurora/gin-vue-admin/server/service/datapackagecode"
 	"github.com/flipped-aurora/gin-vue-admin/server/service/datastatisticsmodel"
 	"github.com/flipped-aurora/gin-vue-admin/server/service/example"
 	"github.com/flipped-aurora/gin-vue-admin/server/service/invitecode"
@@ -20,6 +21,7 @@ type ServiceGroup struct {
 	AnnouncementModelServiceGroup   announcementModel.ServiceGroup
 	V2raynodeServiceGroup           v2raynode.ServiceGroup
 	InvitecodeServiceGroup          invitecode.ServiceGroup
+	DatapackagecodeServiceGroup     datapackagecode.ServiceGroup
 }
 
 var ServiceGroupApp = new(ServiceGroup)
