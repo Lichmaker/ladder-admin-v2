@@ -2,6 +2,7 @@ package router
 
 import (
 	"github.com/flipped-aurora/gin-vue-admin/server/router/announcementModel"
+	"github.com/flipped-aurora/gin-vue-admin/server/router/datapackagecode"
 	"github.com/flipped-aurora/gin-vue-admin/server/router/datastatisticsmodel"
 	"github.com/flipped-aurora/gin-vue-admin/server/router/example"
 	"github.com/flipped-aurora/gin-vue-admin/server/router/invitecode"
@@ -20,6 +21,7 @@ type RouterGroup struct {
 	AnnouncementModel   announcementModel.RouterGroup
 	V2raynode           v2raynode.RouterGroup
 	Invitecode          invitecode.RouterGroup
+	Datapackagecode     datapackagecode.RouterGroup
 }
 
 var RouterGroupApp = new(RouterGroup)

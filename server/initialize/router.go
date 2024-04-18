@@ -107,6 +107,10 @@ func Routers() *gin.Engine {
 		invitecodeRouter := router.RouterGroupApp.Invitecode
 		invitecodeRouter.InitInviteCodeRouter(PrivateGroup)
 	}
+	{
+		datapackagecodeRouter := router.RouterGroupApp.Datapackagecode
+		datapackagecodeRouter.InitDataPackageCodeRouter(PrivateGroup)
+	}
 
 	global.GVA_LOG.Info("router register success")
 	return Router
