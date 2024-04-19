@@ -79,12 +79,56 @@
           </el-select>
         </el-form-item>
         <el-form-item
-          label="被使用时间"
+          label="是否未兑换"
+          prop="searchUnused"
+        >
+          <el-select
+            v-model="searchInfo.searchUnused"
+            clearable
+            placeholder="请选择"
+            style="width: 100px"
+          >
+            <el-option
+              key="true"
+              label="是"
+              value="true"
+            />
+            <el-option
+              key="false"
+              label="否"
+              value="false"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          label="是否未使用"
+          prop="searchUnconsumed"
+        >
+          <el-select
+            v-model="searchInfo.searchUnconsumed"
+            clearable
+            placeholder="请选择"
+            style="width: 100px"
+          >
+            <el-option
+              key="true"
+              label="是"
+              value="true"
+            />
+            <el-option
+              key="false"
+              label="否"
+              value="false"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          label="兑换时间"
           prop="usedAt"
         >
           <template #label>
             <span>
-              被使用时间
+              兑换时间
               <el-tooltip
                 content="搜索范围是开始日期（包含）至结束日期（不包含）"
               >
@@ -133,9 +177,19 @@
       <div class="gva-btn-list">
         <el-button
           type="primary"
+          :icon="Download"
+          @click="exportTable"
+        >导出</el-button>
+        <el-button
+          type="primary"
           icon="plus"
           @click="openDialog"
         >新增</el-button>
+        <el-button
+          type="primary"
+          icon="plus"
+          @click="openBatchCreateDialog"
+        >批量生成新增</el-button>
         <el-popover
           v-model:visible="deleteVisible"
           :disabled="!multipleSelection.length"
@@ -165,21 +219,22 @@
         </el-popover>
       </div>
       <el-table
+        id="listDataTable"
         ref="multipleTable"
         style="width: 100%"
         tooltip-effect="dark"
         :data="tableData"
         row-key="ID"
+        table-layout="auto"
         @selection-change="handleSelectionChange"
       >
         <el-table-column
           type="selection"
-          width="55"
         />
         <el-table-column
           align="left"
           label="日期"
-          width="180"
+          min-width="120"
         >
           <template #default="scope">{{
             formatDate(scope.row.CreatedAt)
@@ -189,25 +244,22 @@
           align="left"
           label="唯一编号"
           prop="uniqueCode"
-          width="120"
         />
         <el-table-column
           align="left"
           label="基础流量(MB)"
           prop="standardData"
-          width="120"
+          min-width="600"
         />
         <el-table-column
           align="left"
           label="有效天数"
           prop="days"
-          width="120"
         />
         <el-table-column
           align="left"
           label="是否启用"
           prop="enable"
-          width="120"
         >
           <template #default="scope">{{
             formatBoolean(scope.row.enable)
@@ -215,8 +267,7 @@
         </el-table-column>
         <el-table-column
           align="left"
-          label="被使用时间"
-          width="180"
+          label="兑换时间"
         >
           <template #default="scope">{{
             formatDate(scope.row.usedAt)
@@ -224,17 +275,23 @@
         </el-table-column>
         <el-table-column
           align="left"
-          label="使用者昵称"
+          label="兑换者昵称"
           prop="usedByNickname"
-          min-width="300"
         >
           <template #default="scope">{{ scope.row.usedByNickname }}</template>
         </el-table-column>
         <el-table-column
           align="left"
+          label="使用时间"
+        >
+          <template #default="scope">{{
+            formatDate(scope.row.consumedAt)
+          }}</template>
+        </el-table-column>
+        <el-table-column
+          align="left"
           label="备注"
           prop="remark"
-          width="120"
         />
         <el-table-column
           align="left"
@@ -337,7 +394,7 @@
             />
           </el-form-item>
           <!-- <el-form-item
-            label="被使用时间:"
+            label="兑换时间:"
             prop="usedAt"
           >
             <el-date-picker
@@ -396,7 +453,7 @@
           <el-descriptions-item label="是否启用">
             {{ formatBoolean(formData.enable) }}
           </el-descriptions-item>
-          <el-descriptions-item label="被使用时间">
+          <el-descriptions-item label="兑换时间">
             {{ formatDate(formData.usedAt) }}
           </el-descriptions-item>
           <el-descriptions-item label="备注">
@@ -404,6 +461,84 @@
           </el-descriptions-item>
         </el-descriptions>
       </el-scrollbar>
+    </el-dialog>
+
+    <el-dialog
+      v-model="batchCreateShow"
+      :before-close="closeBatchCreate"
+      title="批量生成"
+      destroy-on-close
+    >
+      <el-scrollbar height="500px">
+        <el-form
+          ref="batchCreateFormRef"
+          :model="batchCreateFormData"
+          label-position="right"
+          :rules="batchCreateRule"
+          label-width="120px"
+        >
+          <el-form-item
+            label="编号前缀:"
+            prop="codePrefix"
+          >
+            <el-input
+              v-model="batchCreateFormData.codePrefix"
+              :clearable="true"
+              placeholder="编号前缀（可选）"
+            />
+          </el-form-item>
+          <el-form-item
+            label="基础流量(MB):"
+            prop="standardData"
+          >
+            <el-input-number
+              v-model.number="batchCreateFormData.standardData"
+              :min="1"
+              :max="102400"
+              placeholder="请输入基础流量(MB)"
+            />
+          </el-form-item>
+          <el-form-item
+            label="有效天数:"
+            prop="days"
+          >
+            <el-input-number
+              v-model.number="batchCreateFormData.days"
+              :min="1"
+              placeholder="请输入有效天数"
+            />
+          </el-form-item>
+          <el-form-item
+            label="批量生成总数:"
+            prop="days"
+          >
+            <el-input-number
+              v-model.number="batchCreateFormData.total"
+              :min="1"
+              placeholder="请输入总数"
+            />
+          </el-form-item>
+          <el-form-item
+            label="备注:"
+            prop="remark"
+          >
+            <el-input
+              v-model="batchCreateFormData.remark"
+              :clearable="true"
+              placeholder="请输入备注"
+            />
+          </el-form-item>
+        </el-form>
+      </el-scrollbar>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="closeBatchCreate">取 消</el-button>
+          <el-button
+            type="primary"
+            @click="submitBatchCreate"
+          >确 定</el-button>
+        </div>
+      </template>
     </el-dialog>
   </div>
 </template>
@@ -416,6 +551,7 @@ import {
   updateDataPackageCode,
   findDataPackageCode,
   getDataPackageCodeList,
+  batchCreateDataPackageCode,
 } from '@/api/dataPackageCode'
 
 // 全量引入格式化工具 请按需保留
@@ -430,6 +566,8 @@ import {
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref, reactive } from 'vue'
 import { batchGetUserInfoByUUID } from '@/api/user'
+import exportToExcel from '@/utils/exportToExcel'
+import { Download } from '@element-plus/icons-vue'
 
 defineOptions({
   name: 'DataPackageCode',
@@ -443,6 +581,13 @@ const formData = ref({
   enable: false,
   usedAt: new Date(),
   remark: '',
+})
+
+const batchCreateFormData = ref({
+  codePrefix: '',
+  standardData: 0,
+  days: 0,
+  total: 0,
 })
 
 // 验证规则
@@ -537,6 +682,30 @@ const searchRule = reactive({
   ],
 })
 
+const batchCreateRule = reactive({
+  standardData: [
+    {
+      required: true,
+      message: '',
+      trigger: ['input', 'blur'],
+    },
+  ],
+  days: [
+    {
+      required: true,
+      message: '',
+      trigger: ['input', 'blur'],
+    },
+  ],
+  total: [
+    {
+      required: true,
+      message: '',
+      trigger: ['input', 'blur'],
+    }
+  ],
+})
+
 const elFormRef = ref()
 const elSearchFormRef = ref()
 
@@ -546,6 +715,7 @@ const total = ref(0)
 const pageSize = ref(10)
 const tableData = ref([])
 const searchInfo = ref({})
+const batchCreateFormRef = ref({})
 
 // 重置
 const onReset = () => {
@@ -700,6 +870,7 @@ const dialogFormVisible = ref(false)
 
 // 查看详情控制标记
 const detailShow = ref(false)
+const batchCreateShow = ref(false)
 
 // 打开详情弹窗
 const openDetailShow = () => {
@@ -733,6 +904,35 @@ const closeDetailShow = () => {
 const openDialog = () => {
   type.value = 'create'
   dialogFormVisible.value = true
+}
+const openBatchCreateDialog = () => {
+  batchCreateShow.value = true
+}
+const closeBatchCreate = () => {
+  batchCreateShow.value = false
+  batchCreateFormData.value = {
+    codePrefix: '',
+    standardData: 0,
+    days: 0,
+    total: 0,
+  }
+}
+const submitBatchCreate = () => {
+  batchCreateFormRef.value?.validate(async(valid) => {
+    if (!valid) {
+      return
+    }
+    console.log(batchCreateFormData.value)
+    const res = await batchCreateDataPackageCode(batchCreateFormData.value)
+    if (res.code === 0) {
+      ElMessage({
+        type: 'success',
+        message: '批量创建成功',
+      })
+      closeBatchCreate()
+      getTableData()
+    }
+  })
 }
 
 // 关闭弹窗
@@ -773,6 +973,15 @@ const enterDialog = async() => {
     }
   })
 }
+
+const exportTable = () => {
+  const eleIds = [{
+    eleById: 'listDataTable', title: '单表数据'
+  }]
+  console.log(eleIds)
+  exportToExcel(eleIds, '数据导出')
+}
+
 </script>
 
 <style></style>

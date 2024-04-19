@@ -20,6 +20,11 @@ func (userDataUsageService *UserDataUsageService) CreateUserDataUsage(userDataUs
 	return err
 }
 
+func (userDataUsageService *UserDataUsageService) CreateUserDataUsageWithDB(db *gorm.DB, userDataUsage *userDataUsageModel.UserDataUsage) (err error) {
+	err = db.Create(userDataUsage).Error
+	return err
+}
+
 // DeleteUserDataUsage 删除userDataUsage表记录
 // Author [piexlmax](https://github.com/piexlmax)
 func (userDataUsageService *UserDataUsageService) DeleteUserDataUsage(id string) (err error) {

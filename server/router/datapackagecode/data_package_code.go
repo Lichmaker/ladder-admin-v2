@@ -19,9 +19,14 @@ func (s *DataPackageCodeRouter) InitDataPackageCodeRouter(Router *gin.RouterGrou
 		dataPackageCodeRouter.DELETE("deleteDataPackageCode", dataPackageCodeApi.DeleteDataPackageCode)           // 删除dataPackageCode表
 		dataPackageCodeRouter.DELETE("deleteDataPackageCodeByIds", dataPackageCodeApi.DeleteDataPackageCodeByIds) // 批量删除dataPackageCode表
 		dataPackageCodeRouter.PUT("updateDataPackageCode", dataPackageCodeApi.UpdateDataPackageCode)              // 更新dataPackageCode表
+		dataPackageCodeRouter.POST("batchCreateDataPackageCode", dataPackageCodeApi.BatchCreateDataPackageCode)
+		dataPackageCodeRouter.POST("exchange", dataPackageCodeApi.ExchangeDataPackageCode)
+		dataPackageCodeRouter.POST("consumePackage", dataPackageCodeApi.ConsumePackage)
+
 	}
 	{
 		dataPackageCodeRouterWithoutRecord.GET("findDataPackageCode", dataPackageCodeApi.FindDataPackageCode)       // 根据ID获取dataPackageCode表
 		dataPackageCodeRouterWithoutRecord.GET("getDataPackageCodeList", dataPackageCodeApi.GetDataPackageCodeList) // 获取dataPackageCode表列表
+		dataPackageCodeRouterWithoutRecord.GET("getMyDataPackageCodeList", dataPackageCodeApi.GetMyDataPackageCodeList)
 	}
 }

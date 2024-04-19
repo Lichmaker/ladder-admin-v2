@@ -95,3 +95,36 @@ export const getDataPackageCodeList = (params) => {
     params
   })
 }
+
+export const batchCreateDataPackageCode = (data) => {
+  return service({
+    url: '/dataPackageCode/batchCreateDataPackageCode',
+    method: 'post',
+    data
+  })
+}
+
+export const exchangeDataPackageCode = (data) => {
+  return service({
+    url: '/dataPackageCode/exchange',
+    method: 'post',
+    data
+  })
+}
+
+export const getMyDataPackageCodeList = (params) => {
+  return service({
+    url: '/dataPackageCode/getMyDataPackageCodeList',
+    method: 'get',
+    params
+  })
+}
+
+export const consumePackage = (data) => {
+  return service({
+    url: '/dataPackageCode/consumePackage',
+    method: 'post',
+    data
+  })
+}
+

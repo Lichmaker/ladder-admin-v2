@@ -688,7 +688,17 @@ INSERT INTO `sys_apis` (`id`, `created_at`, `updated_at`, `deleted_at`, `path`, 
 	(140, '2024-03-14 10:35:15.774', '2024-03-14 10:35:15.774', NULL, '/inviteCode/findInviteCode', '根据ID获取inviteCode表', 'inviteCode表', 'GET'),
 	(141, '2024-03-14 10:35:15.975', '2024-03-14 10:35:15.975', NULL, '/inviteCode/getInviteCodeList', '获取inviteCode表列表', 'inviteCode表', 'GET'),
 	(142, '2024-03-14 11:58:27.638', '2024-03-14 11:58:27.638', NULL, '/inviteCode/getMyInviteCodeList', '获取用户所属的邀请码', 'inviteCode表', 'GET'),
-	(143, '2024-03-14 13:45:55.849', '2024-03-14 13:45:55.849', NULL, '/inviteCode/deleteMyInviteCodeByIds', '批量删除我的邀请码', 'inviteCode表', 'DELETE');
+	(143, '2024-03-14 13:45:55.849', '2024-03-14 13:45:55.849', NULL, '/inviteCode/deleteMyInviteCodeByIds', '批量删除我的邀请码', 'inviteCode表', 'DELETE'),
+    (144, '2024-04-18 17:24:14.318', '2024-04-18 22:19:00.530', NULL, '/dataPackageCode/createDataPackageCode', '新增dataPackageCode表', 'dataPackageCode表', 'POST'),
+    (145, '2024-04-18 17:24:14.575', '2024-04-18 22:19:06.978', NULL, '/dataPackageCode/deleteDataPackageCode', '删除dataPackageCode表', 'dataPackageCode表', 'DELETE'),
+    (146, '2024-04-18 17:24:14.787', '2024-04-18 22:19:13.122', NULL, '/dataPackageCode/deleteDataPackageCodeByIds', '批量删除dataPackageCode表', 'dataPackageCode表', 'DELETE'),
+    (147, '2024-04-18 17:24:14.991', '2024-04-18 22:19:19.300', NULL, '/dataPackageCode/updateDataPackageCode', '更新dataPackageCode表', 'dataPackageCode表', 'PUT'),
+    (148, '2024-04-18 17:24:15.222', '2024-04-18 22:19:26.244', NULL, '/dataPackageCode/findDataPackageCode', '根据ID获取dataPackageCode表', 'dataPackageCode表', 'GET'),
+    (149, '2024-04-18 17:24:15.425', '2024-04-18 22:19:32.354', NULL, '/dataPackageCode/getDataPackageCodeList', '获取dataPackageCode表列表', 'dataPackageCode表', 'GET'),
+    (150, '2024-04-19 10:34:19.981', '2024-04-19 10:34:19.981', NULL, '/dataPackageCode/batchCreateDataPackageCode', '批量写入激活码', 'dataPackageCode表', 'POST'),
+    (151, '2024-04-19 14:07:30.489', '2024-04-19 14:07:30.489', NULL, '/dataPackageCode/exchange', '兑换激活码', 'dataPackageCode表', 'POST'),
+    (152, '2024-04-19 15:04:44.079', '2024-04-19 15:05:05.764', NULL, '/dataPackageCode/getMyDataPackageCodeList', '读取我兑换的数据', 'dataPackageCode表', 'GET'),
+    (153, '2024-04-19 15:46:48.004', '2024-04-19 15:46:48.004', NULL, '/dataPackageCode/consumePackage', '使用流量包', 'dataPackageCode表', 'POST');
 
 
 CREATE TABLE IF NOT EXISTS `sys_authorities` (
@@ -939,7 +949,10 @@ INSERT INTO `sys_base_menus` (`id`, `created_at`, `updated_at`, `deleted_at`, `m
 	(45, '2024-03-07 11:44:25.397', '2024-03-07 11:45:41.260', NULL, 0, '42', 'download', 'download', 0, 'view/guide/download.vue', 10, '', 0, 0, '下载', 'download', 0),
 	(46, '2024-03-14 10:47:16.403', '2024-03-14 10:47:16.403', NULL, 0, '0', 'invite-code', 'invite-code', 0, 'view/routerHolder.vue', 5, '', 0, 0, '邀请码', 'user', 0),
 	(47, '2024-03-14 10:47:59.241', '2024-03-14 10:47:59.241', NULL, 0, '46', 'invite-code-list', 'invite-code-list', 0, 'view/inviteCode/inviteCode.vue', 10, '', 0, 0, '邀请码列表', '', 0),
-	(48, '2024-03-14 11:50:34.762', '2024-03-14 11:50:34.762', NULL, 0, '46', 'my-invite-code', 'my-invite-code', 0, 'view/inviteCode/myInviteCode.vue', 20, '', 0, 0, '我的邀请码', '', 0);
+	(48, '2024-03-14 11:50:34.762', '2024-03-14 11:50:34.762', NULL, 0, '46', 'my-invite-code', 'my-invite-code', 0, 'view/inviteCode/myInviteCode.vue', 20, '', 0, 0, '我的邀请码', '', 0),
+    (49, '2024-04-18 21:56:22.073', '2024-04-18 21:57:00.217', NULL, 0, '0', 'datapack', 'datapack', 0, 'view/routerHolder.vue', 6, '', 0, 0, '流量包激活码', 'list', 0),
+    (50, '2024-04-18 21:57:28.346', '2024-04-18 21:57:28.346', NULL, 0, '49', 'packlist', 'packlist', 0, 'view/dataPackageCode/dataPackageCode.vue', 10, '', 0, 0, '激活码列表', '', 0),
+    (51, '2024-04-19 10:42:26.276', '2024-04-19 10:54:19.052', NULL, 0, '49', 'exchange', 'exchange', 0, 'view/dataPackageCode/exchange.vue', 9, '', 0, 0, '兑换', '', 0);
 
 
 CREATE TABLE IF NOT EXISTS `sys_base_menu_btns` (
